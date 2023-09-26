@@ -10,9 +10,46 @@ import {
     Row,
     Col,
   } from "reactstrap";
-  import UserHeader from "components/Headers/UserHeader.js";
+import UserHeader from "components/Headers/UserHeader.js";
+import { useState } from "react";
   
   const Arrondissement = () => {
+    const [arrondissement,setArrondissement] = useState({
+      nom_arrondissement:"",
+      ville:"",
+      pays:"",
+      code_postal:"",
+      population:"",
+      superficie:"",
+      adresse:"",
+      quartiers:"",
+      annexe:"",
+    });
+    const onInputChange = (e) => {
+      setArrondissement({...arrondissement,[e.target.name]:e.target.value});
+    }
+    const [response,setResponse]=useState({status : false,});
+  
+    const onSubmit = async(e) => {
+      e.preventDefault();
+      let data = JSON.stringify(arrondissement);
+      console.log(data);
+      let head = {"content-type":"application/json"};
+      fetch("https://localhost:8080/api/arrondissement",{
+        method:"POST",
+        headers:head,
+        body:data,
+      })
+      .then((response)=>response.json())
+      .then((data)=>{
+        setResponse(response);
+        console.log(response);
+      })
+      .catch((er)=>{
+        console.log(er);
+      });
+    }
+    
     return (
       <>
         <UserHeader />
@@ -39,7 +76,7 @@ import {
                   </Row>
                 </CardHeader>
                 <CardBody>
-                  <Form>
+                  <Form onSubmit={(e)=> onSubmit(e)}>
                     <h6 className="heading-small text-muted mb-4">
                       Information d'arrondissement
                     </h6>
@@ -58,6 +95,8 @@ import {
                               id="input-nom-arrondissement"
                               placeholder="Nom d'arrondissement"
                               type="text"
+                              onChange={(e)=>onInputChange(e)}
+                              value={arrondissement.nom_arrondissement}
                             />
                           </FormGroup>
                         </Col>
@@ -74,6 +113,8 @@ import {
                               id="input-Adresse"
                               placeholder="Adresse de l'arrondissement"
                               type="text"
+                              onChange={(e)=>onInputChange(e)}
+                              value={arrondissement.adresse}
                             />
                           </FormGroup>
                         </Col>
@@ -92,6 +133,8 @@ import {
                               id="input-ville"
                               placeholder="Ville"
                               type="text"
+                              onChange={(e)=>onInputChange(e)}
+                              value={arrondissement.ville}
                             />
                           </FormGroup>
                         </Col>
@@ -108,6 +151,8 @@ import {
                               id="input-pays"
                               placeholder="Pays"
                               type="text"
+                              onChange={(e)=>onInputChange(e)}
+                              value={arrondissement.pays}
                             />
                           </FormGroup>
                         </Col>
@@ -124,6 +169,8 @@ import {
                               id="input-code-postal"
                               placeholder="Code postal"
                               type="number"
+                              onChange={(e)=>onInputChange(e)}
+                              value={arrondissement.code_postal}
                             />
                           </FormGroup>
                         </Col>
@@ -142,6 +189,8 @@ import {
                               id="input-population"
                               placeholder="Population"
                               type="text"
+                              onChange={(e)=>onInputChange(e)}
+                              value={arrondissement.population}
                             />
                           </FormGroup>
                         </Col>
@@ -158,6 +207,8 @@ import {
                               id="input-superficie"
                               placeholder="Superficie"
                               type="text"
+                              onChange={(e)=>onInputChange(e)}
+                              value={arrondissement.superficie}
                             />
                           </FormGroup>
                         </Col>
@@ -176,6 +227,8 @@ import {
                               id="input-quarties"
                               placeholder="Quartiers"
                               type="text"
+                              onChange={(e)=>onInputChange(e)}
+                              value={arrondissement.quartiers}
                             />
                           </FormGroup>
                         </Col>
@@ -201,6 +254,8 @@ import {
                               id="input-annexe"
                               placeholder="Nom d'annexe"
                               type="text"
+                              onChange={(e)=>onInputChange(e)}
+                              value={arrondissement.annexe}
                             />
                           </FormGroup>
                         </Col>
@@ -217,6 +272,8 @@ import {
                               id="input-adresse"
                               placeholder="Adresse de l'annexe"
                               type="text"
+                              onChange={(e)=>onInputChange(e)}
+                              value={arrondissement.annexe}
                             />
                           </FormGroup>
                         </Col>

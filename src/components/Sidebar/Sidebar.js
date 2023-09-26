@@ -194,6 +194,7 @@ const Sidebar = (props) => {
             </Row>
           </div>
           {/* Form */}
+          
           <Form className="mt-4 mb-3 d-md-none">
             <InputGroup className="input-group-rounded input-group-merge">
               <Input
@@ -209,6 +210,7 @@ const Sidebar = (props) => {
               </InputGroupAddon>
             </InputGroup>
           </Form>
+                  
           {/* Navigation */}
           <Nav navbar>{createLinks(routes)}</Nav>
           {/* Divider */}
