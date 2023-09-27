@@ -3,7 +3,8 @@ import Arrondissement from "views/examples/Arrondissement";
 import Registere from "views/examples/Registere";
 import Officier from "views/examples/Officier";
 import Citoyen from "views/examples/Citoyen";
-import Icons from "views/examples/Icons2";
+import ViewArrondissement from "views/examples/ViewArrondissement";
+import EditArrondissement from "views/examples/EditArrondissement";
 var routes = [
   {
     path: "/index",
@@ -17,6 +18,20 @@ var routes = [
     name: "Arrondissement",
     icon: "ni ni-building text-blue",
     component: <Arrondissement />,
+    layout: "/admin",
+  },
+  {
+    path: "/viewArrondissement",
+    name: "Liste des arrondissements",
+    icon: "ni ni-badge text-yellow",
+    component: <ViewArrondissement />,
+    layout: "/admin",
+  },
+  {
+    path: "/editArrondissement",
+    name: "Modifier un arrondissements",
+    icon: "ni ni-badge text-yellow",
+    component: <EditArrondissement />,
     layout: "/admin",
   },
   {
@@ -40,5 +55,6 @@ var routes = [
     component: <Officier />,
     layout: "/admin",
   }
+  
 ];
 export default routes;

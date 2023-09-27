@@ -1,10 +1,13 @@
 import { useState , useEffect } from "react";
-import {DataGrid} from "@mui/x-data-grid";
-
+import { Link, useNavigate } from 'react-router-dom';
+import { DataGrid, GridDeleteIcon } from "@mui/x-data-grid";
+import { IconButton } from "@mui/material";
+import { Edit } from "@mui/icons-material";
+import UserHeader from "components/Headers/UserHeader";
+import { Card, CardBody, CardHeader, Col, Container, Row } from "reactstrap";
 const ViewArrondissement = () => {
-    const [arrondissement,setArrondissement] = useState({
-        annexe: 0,
-    });
+    const navigate = useNavigate();
+    const [arrondissements,setArrondissements] = useState([]);
     const columns = [
         { field : "id" , headerName: "ID"},
         {
@@ -38,7 +41,7 @@ const ViewArrondissement = () => {
             flex: 1,
         },
         {
-            field : "adresse",
+            field : "adresseArrondissement",
             headerName : "Adresse",
             flex: 1,
         },
@@ -47,20 +50,37 @@ const ViewArrondissement = () => {
             headerName : "Quarties",
             flex: 1,
         },
-        {
+        /*{
             field : "annexe",
             headerName : "Annexe",
             flex: 1,
-        },
+        },*/
+        {
+            field : "actions" ,
+            headerName:"Actions",
+            width :150,
+            renderCell:(params) => (
+                <div>
+                    <IconButton 
+                        onClick={()=> handleEditClick(params.row)}>
+                        <Edit color='primary'/>
+                    </IconButton>
+                    <IconButton
+                        onClick={()=> handleDeleteClick(params.row.id)}>
+                        <GridDeleteIcon color= 'error'/>
+                    </IconButton>
+                </div>
+            ),}
     ];
 
-    const loadArrondissement = () => {
-        fetch("http://localhost:8080/api/arrondissement")
+    // Fetch the annexes too 
+    /*const loadArrondissement = () => {
+        fetch("http://localhost:8080/api/arrondissements")
         .then((response) => response.json())
         .then((data)=> {
             const arrondissementData = data.map((arrondissement) => {
                 const id = arrondissement.annexe.id;
-                fetch(`http://localhost:8080/api/annexe/${id}`)
+                fetch(`http://localhost:8080/api/annexes/${id}`)
                 .then((response)=> response.json())
                 .then((annexeData) => { 
                     arrondissement.annexe = annexeData.nom;
@@ -69,22 +89,71 @@ const ViewArrondissement = () => {
             .catch((error)=> {
                 console.log(error);
             });
-            return arrondissement;
+            return arrondissements;
         });
-        setArrondissement(arrondissementData);
+        setArrondissements(arrondissementData);
         console.log(arrondissementData);
     })
     .catch((error)=>{
     console.log(error);
     });
+    }*/
+
+    
+    const handleEditClick = (arrondissement) => {
+        console.log("before passing " , arrondissement);
+        navigate("/admin/editArrondissement", {state: {arrondissement}});
     }
 
+    const handleDeleteClick = (id) => {
+        fetch(`http://localhost:8080/api/arrondissement/${id}`, {
+            method: 'DELETE',
+        })
+        .then((response) => {
+            if (response.status === 204) {
+                loadArrondissement();
+            } else {
+                console.error('Failed to delete arrondissement');
+            }
+        });
+    }
+    const loadArrondissement = () => {
+        fetch("http://localhost:8080/api/arrondissements")
+        .then((response) => response.json())
+        .then((data)=> setArrondissements(data));
+    }
+    
     useEffect(()=>{
         loadArrondissement();
     },[]);
 
     return (
-        <DataGrid checkboxSelect rows={arrondissement} columns={columns}/>
+        <>
+        <UserHeader />
+        <Container className="mt--7" fluid>
+            <Row>
+                <Col className="order-xl-1" xl="12">
+                    <Card className="bg-secondary shadow">
+                        <CardHeader className="bg-white border-0">
+                        <Row className="align-items-center">
+                            <Col xs="8">
+                            <h3 className="mb-0">Liste des arrondissements</h3>
+                            </Col>
+                        </Row>
+                        </CardHeader>
+                        <CardBody>
+                                <DataGrid
+                                    rows={arrondissements}
+                                    columns={columns} 
+                                    autoHeight={true}
+                                    getRowId={(row)=> row.id}/>
+                        </CardBody>
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
+        </>
     );
 };
 export default ViewArrondissement;
+

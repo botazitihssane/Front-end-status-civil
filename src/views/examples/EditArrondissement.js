@@ -9,35 +9,39 @@ import {
     Row,
     Col,
     Button,
-  } from "reactstrap";
+} from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
   
   const Arrondissement = () => {
-    const [arrondissement,setArrondissement] = useState({
-      nomArrondissement:"",
-      ville:"",
-      pays:"",
-      codePostal:"",
-      population:"",
-      superficie:"",
-      adresseArrondissement:"",
-      quartiers:""
+    const location = useLocation();
+    const object = location.state.arrondissement;
+
+    const [arrondissement, setArrondissement] = useState({
+        id:object.id,
+        nomArrondissement:object.nomArrondissement,
+        ville:object.ville,
+        pays:object.pays,
+        codePostal:object.codePostal,
+        population:object.population,
+        superficie:object.superficie,
+        adresseArrondissement:object.adresseArrondissement,
+        quartiers:object.quartiers
     });
 
     const onInputChange = (e) => {
       setArrondissement({...arrondissement,[e.target.name]:e.target.value});
     }
-    const [response,setResponse]=useState({status : false,});
+    const [response,setResponse]=useState({status : false});
   
     const onSubmit = async(e) => {
       e.preventDefault();
       let data = JSON.stringify(arrondissement);
       console.log(data);
-      let head = { "Content-Type": "application/json" };
+      let head = {"content-type":"application/json"};
       fetch('http://localhost:8080/api/arrondissement',{
-        method:"POST",
+        method:"PUT",
         headers:head,
         body:data,
       })
@@ -46,8 +50,8 @@ import { Link } from "react-router-dom";
         setResponse(response);
         console.log(response);
       })
-      .catch((error) => {
-        console.error(error);
+      .catch((er)=>{
+        console.log(er);
       });
     }
     
@@ -62,15 +66,12 @@ import { Link } from "react-router-dom";
                 <CardHeader className="bg-white border-0">
                   <Row className="align-items-center">
                     <Col xs="8">
-                      <h3 className="mb-0">Arrondissement</h3>
-                    </Col>
-                    <Col className="text-right" xs="4">
-                      <Link to={"/admin/viewArrondissement"} className="btn btn-primary">Liste des arrondissements</Link>
+                      <h3 className="mb-0">Modifier l'arrondissement {arrondissement.nomArrondissement}</h3>
                     </Col>
                   </Row>
                 </CardHeader>
                 <CardBody>
-                <Form onSubmit={(e)=> onSubmit(e)}>
+                  <Form onSubmit={(e)=> onSubmit(e)}>
                     <h6 className="heading-small text-muted mb-4">
                       Information d'arrondissement
                     </h6>
@@ -238,7 +239,7 @@ import { Link } from "react-router-dom";
                     </div>
                     <div className="text-right" xs="4">
                         <Button type="submit" color="primary">
-                            Enregistrer les données 
+                            Enregistrer les modifications
                         </Button>
                     </div>
                   </Form>
@@ -248,7 +249,6 @@ import { Link } from "react-router-dom";
           </Row>
         </Container>
       </>
-      
     );
   };
   

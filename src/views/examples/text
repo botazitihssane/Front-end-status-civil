@@ -1,0 +1,46 @@
+{/*
+                      <hr className="my-4" />
+                    <h6 className="heading-small text-muted mb-4">
+                      Annexe de l'arrondissement
+                    </h6>
+                    <div className="pl-lg-4">
+                      <Row>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-nom-annexe"
+                            >
+                              Nom d'annexe
+                            </label>
+                            <Input
+                              className="form-control-alternative"
+                              id="input-annexe"
+                              placeholder="Nom d'annexe"
+                              type="text"
+                              onChange={(e)=>onInputChange(e)}
+                              value={arrondissement.annexe}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-adresse"
+                            >
+                              Adresse de l'annexe
+                            </label>
+                            <Input
+                              className="form-control-alternative"
+                              id="input-adresse"
+                              placeholder="Adresse de l'annexe"
+                              type="text"
+                              onChange={(e)=>onInputChange(e)}
+                              value={arrondissement.annexe}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                    </div>
+                     */ }
