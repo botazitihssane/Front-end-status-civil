@@ -5,6 +5,8 @@ import Officier from "views/examples/Officier";
 import Citoyen from "views/examples/Citoyen";
 import ViewArrondissement from "views/examples/ViewArrondissement";
 import EditArrondissement from "views/examples/EditArrondissement";
+import ViewOfficier from "views/examples/ViewOfficier";
+import EditOfficier from "views/examples/EditOfficier";
 var routes = [
   {
     path: "/index",
@@ -53,6 +55,20 @@ var routes = [
     name: "Officer",
     icon: "ni ni-badge text-yellow",
     component: <Officier />,
+    layout: "/admin",
+  },
+  {
+    path: "/viewOfficier",
+    name: "Liste des officiers",
+    icon: "ni ni-badge text-yellow",
+    component: <ViewOfficier />,
+    layout: "/admin",
+  },
+  {
+    path: "/editOfficier",
+    name: "Modifier un officier",
+    icon: "ni ni-badge text-yellow",
+    component: <EditOfficier />,
     layout: "/admin",
   }
   

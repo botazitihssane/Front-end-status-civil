@@ -9,30 +9,36 @@ import {
     Row,
     Col,
     Button,
-  } from "reactstrap";
-  import UserHeader from "components/Headers/UserHeader.js";
-import { Link } from "react-router-dom";
+} from "reactstrap";
+import UserHeader from "components/Headers/UserHeader.js";
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
   
-  const Officier = () => {
+  const EditOfficier = () => {
+    const location = useLocation();
+    const object = location.state.officier;
+
     const [officier, setOfficier] = useState({
-      nom:"",
-      prenom:"",
-      cin:"",
-      grade:"",
-      email:"",
-      telephone:""
-    })
+        id:object.id,
+        nom:object.nom,
+        prenom:object.prenom,
+        grade:object.grade,
+        cin:object.cin,
+        telephone:object.telephone,
+        email:object.email
+    });
+
     const onInputChange = (e) => {
       setOfficier({...officier,[e.target.name]:e.target.value});
     }
-    const [response,setResponse]=useState({status : false,});
+    const [response,setResponse]=useState({status : false});
+  
     const onSubmit = async(e) => {
       e.preventDefault();
       let data = JSON.stringify(officier);
-      let head = { "Content-Type": "application/json" };
+      let head = {"content-type":"application/json"};
       fetch('http://localhost:8080/api/officier',{
-        method:"POST",
+        method:"PUT",
         headers:head,
         body:data,
       })
@@ -41,10 +47,11 @@ import { useState } from "react";
         setResponse(response);
         console.log(response);
       })
-      .catch((error) => {
-        console.error(error);
+      .catch((er)=>{
+        console.log(er);
       });
     }
+    
     return (
       <>
         <UserHeader />
@@ -56,15 +63,12 @@ import { useState } from "react";
                 <CardHeader className="bg-white border-0">
                   <Row className="align-items-center">
                     <Col xs="8">
-                      <h3 className="mb-0">Officier</h3>
-                    </Col>
-                    <Col className="text-right" xs="4">
-                      <Link to={"/admin/viewOfficier"} className="btn btn-primary">Liste des officiers</Link>
+                      <h3 className="mb-0">Modifier l'officier </h3>
                     </Col>
                   </Row>
                 </CardHeader>
                 <CardBody>
-                  <Form onSubmit={(e)=> onSubmit(e)}>
+                <Form onSubmit={(e)=> onSubmit(e)}>
                     <h6 className="heading-small text-muted mb-4">
                       Information d'officier
                     </h6>
@@ -206,5 +210,5 @@ import { useState } from "react";
     );
   };
   
-  export default Officier;
+  export default EditOfficier;
   
