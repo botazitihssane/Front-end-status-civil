@@ -7,6 +7,9 @@ import ViewArrondissement from "views/examples/ViewArrondissement";
 import EditArrondissement from "views/examples/EditArrondissement";
 import ViewOfficier from "views/examples/ViewOfficier";
 import EditOfficier from "views/examples/EditOfficier";
+import Annexe from "views/examples/Annexe";
+import ViewAnnexe from "views/examples/viewAnnexe";
+import EditAnnexe from "views/examples/EditAnnexe";
 var routes = [
   {
     path: "/index",
@@ -70,7 +73,28 @@ var routes = [
     icon: "ni ni-badge text-yellow",
     component: <EditOfficier />,
     layout: "/admin",
-  }
+  },
+  {
+    path: "/annexe",
+    name: "Annexe",
+    icon: "ni ni-badge text-yellow",
+    component: <Annexe />,
+    layout: "/admin",
+  },
+  {
+    path: "/viewAnnexes",
+    name: "Liste des annexes",
+    icon: "ni ni-badge text-yellow",
+    component: <ViewAnnexe />,
+    layout: "/admin",
+  },
+  {
+    path: "/editAnnexe",
+    name: "Modifier l'annexe",
+    icon: "ni ni-badge text-yellow",
+    component: <EditAnnexe />,
+    layout: "/admin",
+  },
   
 ];
 export default routes;

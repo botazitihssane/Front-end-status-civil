@@ -12,15 +12,18 @@ import {
   } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
   
   const Annexe = () => {
+    const location = useLocation();
+    const object = location.state.annexe;
     const [annexe,setAnnexe] = useState({
+        id:object.id,
         arrondissement:{
-            id:""
+            id:object.arrondissement.id,
         },
-        nomAnnexe:"",
-        adresseAnnexe:""
+        nomAnnexe:object.nomAnnexe,
+        adresseAnnexe:object.adresseAnnexe,
     });
 
     const [arrondissements,setArrondissements] = useState([]);
@@ -51,24 +54,24 @@ import { Link } from "react-router-dom";
     const [response,setResponse]=useState({status : false,});
   
     const onSubmit = async(e) => {
-      e.preventDefault();
-      let data = JSON.stringify(annexe);
-      console.log(data);
-      let head = { "Content-Type": "application/json" };
-      fetch('http://localhost:8080/api/annexe',{
-        method:"POST",
-        headers:head,
-        body:data,
-      })
-      .then((response)=>response.json())
-      .then((data)=>{
-        setResponse(response);
-        console.log(response);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    }
+        e.preventDefault();
+        let data = JSON.stringify(annexe);
+        console.log(data);
+        let head = {"content-type":"application/json"};
+        fetch('http://localhost:8080/api/annexe',{
+          method:"PUT",
+          headers:head,
+          body:data,
+        })
+        .then((response)=>response.json())
+        .then((data)=>{
+          setResponse(response);
+          console.log(response);
+        })
+        .catch((er)=>{
+          console.log(er);
+        });
+      }
 
     const loadArrondissements = (ville) => {
         fetch(`http://localhost:8080/api/arrondissement/ville/${ville}`)
@@ -99,9 +102,6 @@ import { Link } from "react-router-dom";
                     <Col xs="8">
                       <h3 className="mb-0">Annexe</h3>
                     </Col>
-                    <Col className="text-right" xs="4">
-                      <Link to={"/admin/viewAnnexes"} className="btn btn-primary">Liste des annexes</Link>
-                    </Col>
                   </Row>
                 </CardHeader>
                 <CardBody>
@@ -127,9 +127,7 @@ import { Link } from "react-router-dom";
                                     name="ville"
                                     onChange={(e)=>onVilleInputChange(e)}
                                     value={selectedVille}>
-                                        <option value=" ">
-                                            Ville
-                                        </option>
+                                        <option value="">Ville</option>
                                         {villes.map((ville) => (
                                             <option key={ville} value={ville}>
                                                 {ville}
@@ -154,9 +152,7 @@ import { Link } from "react-router-dom";
                                     name="arrondissement"
                                     onChange={(e)=>onInputChange(e)}
                                     value={annexe.arrondissement.id}>
-                                        <option value="" disabled hidden>
-                                            Arrondissement
-                                        </option>
+                                        <option value=""> Arrondissement </option>
                                         {arrondissements.map((arrondissement) => (
                                             <option key={arrondissement.id} value={arrondissement.id}>
                                                 {arrondissement.nomArrondissement}
@@ -209,7 +205,7 @@ import { Link } from "react-router-dom";
                     </div>
                     <div className="text-right" xs="4">
                         <Button type="submit" color="primary">
-                            Enregistrer les données 
+                            Enregistrer les modifications 
                         </Button>
                     </div>
                   </Form>
