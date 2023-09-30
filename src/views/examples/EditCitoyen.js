@@ -12,22 +12,23 @@ import {
   } from "reactstrap";
   import UserHeader from "components/Headers/UserHeader.js";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
   
-  const Citoyen = () => {
+  const EditCitoyen = () => {
+    const location = useLocation();
+    const object = location.state.citoyen;
     const [citoyen,setCitoyen] = useState({
-      nom:"",
-      prenom:"",
-      sexe:"",
-      numeroIdentification:"",
-      dateNaissance:"",
-      lieuNaissance:"",
-      nationalite:"",
-      adresse:"",
-      ville:"",
-      pays:"",
-      profession:"",
-      etatCivil:""
+        id:object.id,
+        nom:object.nom,
+        prenom:object.prenom,
+        sexe:object.sexe,
+        numeroIdentification:object.numeroIdentification,
+        dateNaissance:object.dateNaissance,
+        lieuNaissance:object.lieuNaissance,
+        nationalite:object.nationalite,
+        adresse:object.adresse,
+        profession:object.profession,
+        etatCivil:object.etatCivil
     });
 
     const onInputChange = (e) => {
@@ -38,22 +39,11 @@ import { Link } from "react-router-dom";
  
     const onSubmit = async(e) => {
       e.preventDefault();
-      const updatedCitoyen = { ...citoyen };
-      if (updatedCitoyen.ville && updatedCitoyen.pays) {
-        updatedCitoyen.adresse = `${updatedCitoyen.ville}, ${updatedCitoyen.pays}`;
-      } else if (updatedCitoyen.ville) {
-        updatedCitoyen.adresse = updatedCitoyen.ville;
-      } else if (updatedCitoyen.pays) {
-        updatedCitoyen.adresse = updatedCitoyen.pays;
-      }
-      delete updatedCitoyen.ville;
-      delete updatedCitoyen.pays;
-
       let data = JSON.stringify(citoyen);
       console.log(data);
       let head = { "Content-Type": "application/json" };
       fetch('http://localhost:8080/api/personne',{
-        method:"POST",
+        method:"PUT",
         headers:head,
         body:data,
       })
@@ -77,10 +67,7 @@ import { Link } from "react-router-dom";
                 <CardHeader className="bg-white border-0">
                   <Row className="align-items-center">
                     <Col xs="8">
-                      <h3 className="mb-0">Citoyen</h3>
-                    </Col>
-                    <Col className="text-right" xs="4">
-                      <Link to={"/admin/viewCitoyens"} className="btn btn-primary">Liste des citoyens</Link>
+                      <h3 className="mb-0">Modifier le citoyen</h3>
                     </Col>
                   </Row>
                 </CardHeader>
@@ -230,7 +217,7 @@ import { Link } from "react-router-dom";
                         </Col>
                       </Row>
                       <Row>
-                        <Col lg="4">
+                        <Col lg="12">
                           <FormGroup>
                             <label
                               className="form-control-label"
@@ -246,44 +233,6 @@ import { Link } from "react-router-dom";
                               name="adresse"
                               onChange={(e)=>onInputChange(e)}
                               value={citoyen.adresse}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col lg="4">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-ville"
-                            >
-                              Ville
-                            </label>
-                            <Input
-                              className="form-control-alternative"
-                              id="input-ville"
-                              placeholder="Ville"
-                              type="text"
-                              name="ville"
-                              onChange={(e)=>onInputChange(e)}
-                              value={citoyen.ville}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col lg="4">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-pays"
-                            >
-                              Pays
-                            </label>
-                            <Input
-                              className="form-control-alternative"
-                              id="input-pays"
-                              placeholder="Pays"
-                              type="text"
-                              name="pays"
-                              onChange={(e)=>onInputChange(e)}
-                              value={citoyen.pays}
                             />
                           </FormGroup>
                         </Col>
@@ -331,7 +280,7 @@ import { Link } from "react-router-dom";
                     </div>
                     <div className="text-right" xs="4">
                         <Button type="submit" color="primary">
-                            Enregistrer les données 
+                            Enregistrer les modifications 
                         </Button>
                     </div>
                   </Form>
@@ -344,5 +293,5 @@ import { Link } from "react-router-dom";
     );
   };
   
-  export default Citoyen;
+  export default EditCitoyen;
   

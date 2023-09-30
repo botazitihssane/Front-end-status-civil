@@ -12,6 +12,8 @@ import ViewAnnexe from "views/examples/viewAnnexe";
 import EditAnnexe from "views/examples/EditAnnexe";
 import Viewregistre from "views/examples/ViewRegistre";
 import EditRegistre from "views/examples/EditRegistre";
+import ViewCitoyen from "views/examples/ViewCitoyen";
+import EditCitoyen from "views/examples/EditCitoyen";
 var routes = [
   {
     path: "/index",
@@ -30,14 +32,14 @@ var routes = [
   {
     path: "/viewArrondissement",
     name: "Liste des arrondissements",
-    icon: "ni ni-badge text-yellow",
+    icon: "ni ni-building text-blue",
     component: <ViewArrondissement />,
     layout: "/admin",
   },
   {
     path: "/editArrondissement",
     name: "Modifier un arrondissements",
-    icon: "ni ni-badge text-yellow",
+    icon: "ni ni-building text-blue",
     component: <EditArrondissement />,
     layout: "/admin",
   },
@@ -70,6 +72,20 @@ var routes = [
     layout: "/admin",
   },
   {
+    path: "/viewCitoyens",
+    name: "Liste des citoyens",
+    icon: "ni ni-single-02 text-orange",
+    component: <ViewCitoyen />,
+    layout: "/admin",
+  },
+  {
+    path: "/editCitoyen",
+    name: "Modifier un citoyen",
+    icon: "ni ni-single-02 text-orange",
+    component: <EditCitoyen />,
+    layout: "/admin",
+  },
+  {
     path: "/officer",
     name: "Officer",
     icon: "ni ni-badge text-yellow",
@@ -93,21 +109,21 @@ var routes = [
   {
     path: "/annexe",
     name: "Annexe",
-    icon: "ni ni-badge text-yellow",
+    icon: "ni ni-building text-blue",
     component: <Annexe />,
     layout: "/admin",
   },
   {
     path: "/viewAnnexes",
     name: "Liste des annexes",
-    icon: "ni ni-badge text-yellow",
+    icon: "ni ni-building text-blue",
     component: <ViewAnnexe />,
     layout: "/admin",
   },
   {
     path: "/editAnnexe",
     name: "Modifier l'annexe",
-    icon: "ni ni-badge text-yellow",
+    icon: "ni ni-building text-blue",
     component: <EditAnnexe />,
     layout: "/admin",
   },
