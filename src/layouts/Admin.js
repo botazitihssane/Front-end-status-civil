@@ -43,11 +43,13 @@ const Admin = (props) => {
     return "Brand";
   };
 
+  const filteredRoutes = routes.filter((route) => !route.hidden);
+
   return (
     <>
       <Sidebar
         {...props}
-        routes={routes}
+        routes={filteredRoutes}
         logo={{
           innerLink: "/admin/index",
           imgSrc: require("../assets/img/brand/morocco.png"),
