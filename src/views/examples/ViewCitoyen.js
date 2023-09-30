@@ -1,13 +1,16 @@
 import { useState , useEffect } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { DataGrid, GridDeleteIcon } from "@mui/x-data-grid";
-import { IconButton } from "@mui/material";
+import { FormGroup, IconButton } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import UserHeader from "components/Headers/UserHeader";
-import { Card, CardBody, CardHeader, Col, Container, Row } from "reactstrap";
+import { Card, CardBody, CardHeader, Col, Container, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from "reactstrap";
 const ViewCitoyen = () => {
     const navigate = useNavigate();
     const [citoyens,setCitoyens] = useState([]);
+    const [recherche, setRecherche] = useState({
+        terme:"",
+    });
     const columns = [
         { field : "id" , headerName: "ID"},
         {
@@ -78,9 +81,12 @@ const ViewCitoyen = () => {
             ),}
     ];
 
-    
+    const handleInputChange = (e) => {
+        setRecherche({...recherche,[e.target.name]:e.target.value});
+        searchPersonne(e.target.value);
+      };
+
     const handleEditClick = (citoyen) => {
-        console.log("before passing " , citoyen);
         navigate("/admin/editCitoyen", {state: {citoyen}});
     }
 
@@ -96,6 +102,25 @@ const ViewCitoyen = () => {
             }
         });
     }
+
+    const searchPersonne = (terme) => {
+        if (terme.trim() === "") {
+            loadCitoyens();
+        }else {
+            fetch(`http://localhost:8080/api/personne/terme/${terme}`)
+            .then((response) => {
+                if (!response.ok) {
+                throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((data) => setCitoyens(data))
+            .catch((error) => console.error("Error loading citoyens:", error));
+            console.log(citoyens); 
+        }
+        
+    };
+
     const loadCitoyens = () => {
         fetch("http://localhost:8080/api/personnes")
         .then((response) => response.json())
@@ -118,7 +143,29 @@ const ViewCitoyen = () => {
                             <Col xs="8">
                             <h3 className="mb-0">Liste des citoyens</h3>
                             </Col>
-                        </Row>
+                        
+                        <Col className="text-right">
+                                <form>
+                                    <div className="navbar-search navbar-search-light form-inline mr-3 d-none d-md-flex ml-lg-auto">
+                                        <FormGroup className="mb-0">
+                                        <InputGroup className="input-group-alternative">
+                                            <InputGroupAddon addonType="prepend">
+                                            <InputGroupText>
+                                                <i className="fas fa-search" />
+                                            </InputGroupText>
+                                            </InputGroupAddon>
+                                            <Input
+                                                placeholder="Search"
+                                                type="text"
+                                                name="terme"
+                                                value={recherche.terme}
+                                                onChange={(e)=>handleInputChange(e)} />
+                                        </InputGroup>
+                                        </FormGroup>
+                                    </div>
+                                </form>
+                            </Col>
+                            </Row>
                         </CardHeader>
                         <CardBody>
                                 <DataGrid
