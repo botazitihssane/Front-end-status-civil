@@ -26,8 +26,7 @@ import { useLocation } from "react-router-dom";
         codePostal:object.codePostal,
         population:object.population,
         superficie:object.superficie,
-        adresseArrondissement:object.adresseArrondissement,
-        quartiers:object.quartiers
+        adresseArrondissement:object.adresseArrondissement
     });
 
     const onInputChange = (e) => {
@@ -211,27 +210,6 @@ import { useLocation } from "react-router-dom";
                               name="superficie"
                               onChange={(e)=>onInputChange(e)}
                               value={arrondissement.superficie}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-quarties"
-                            >
-                              Quartiers
-                            </label>
-                            <Input
-                              className="form-control-alternative"
-                              id="input-quarties"
-                              placeholder="Quartiers"
-                              type="text"
-                              name="quartiers"
-                              onChange={(e)=>onInputChange(e)}
-                              value={arrondissement.quartiers}
                             />
                           </FormGroup>
                         </Col>

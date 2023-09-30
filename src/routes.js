@@ -25,7 +25,7 @@ var routes = [
   {
     path: "/arrondissement",
     name: "Arrondissement",
-    icon: "ni ni-istanbul text-purple",
+    icon: "ni ni-istanbul text-gray",
     component: <Arrondissement />,
     layout: "/admin",
   },

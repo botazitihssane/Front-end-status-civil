@@ -46,16 +46,6 @@ const ViewArrondissement = () => {
             flex: 1,
         },
         {
-            field : "quartiers",
-            headerName : "Quarties",
-            flex: 1,
-        },
-        /*{
-            field : "annexe",
-            headerName : "Annexe",
-            flex: 1,
-        },*/
-        {
             field : "actions" ,
             headerName:"Actions",
             width :150,
@@ -72,33 +62,6 @@ const ViewArrondissement = () => {
                 </div>
             ),}
     ];
-
-    // Fetch the annexes too 
-    /*const loadArrondissement = () => {
-        fetch("http://localhost:8080/api/arrondissements")
-        .then((response) => response.json())
-        .then((data)=> {
-            const arrondissementData = data.map((arrondissement) => {
-                const id = arrondissement.annexe.id;
-                fetch(`http://localhost:8080/api/annexes/${id}`)
-                .then((response)=> response.json())
-                .then((annexeData) => { 
-                    arrondissement.annexe = annexeData.nom;
-                    console.log(arrondissement.annexe.nom);
-            })
-            .catch((error)=> {
-                console.log(error);
-            });
-            return arrondissements;
-        });
-        setArrondissements(arrondissementData);
-        console.log(arrondissementData);
-    })
-    .catch((error)=>{
-    console.log(error);
-    });
-    }*/
-
     
     const handleEditClick = (arrondissement) => {
         console.log("before passing " , arrondissement);

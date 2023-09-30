@@ -23,7 +23,6 @@ import { Link } from "react-router-dom";
       population:"",
       superficie:"",
       adresseArrondissement:"",
-      quartiers:""
     });
 
     const onInputChange = (e) => {
@@ -210,27 +209,6 @@ import { Link } from "react-router-dom";
                               name="superficie"
                               onChange={(e)=>onInputChange(e)}
                               value={arrondissement.superficie}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-quarties"
-                            >
-                              Quartiers
-                            </label>
-                            <Input
-                              className="form-control-alternative"
-                              id="input-quarties"
-                              placeholder="Quartiers"
-                              type="text"
-                              name="quartiers"
-                              onChange={(e)=>onInputChange(e)}
-                              value={arrondissement.quartiers}
                             />
                           </FormGroup>
                         </Col>
