@@ -5,7 +5,7 @@ import { IconButton } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import UserHeader from "components/Headers/UserHeader";
 import { Card, CardBody, CardHeader, Col, Container, Row } from "reactstrap";
-const ViewArrondissement = () => {
+const ViewCitoyen = () => {
     const navigate = useNavigate();
     const [citoyens,setCitoyens] = useState([]);
     const columns = [
@@ -134,5 +134,4 @@ const ViewArrondissement = () => {
         </>
     );
 };
-export default ViewArrondissement;
-
+export default ViewCitoyen;

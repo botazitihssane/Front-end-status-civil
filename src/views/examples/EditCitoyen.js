@@ -28,14 +28,81 @@ import { useLocation } from "react-router-dom";
         nationalite:object.nationalite,
         adresse:object.adresse,
         profession:object.profession,
-        etatCivil:object.etatCivil
+        etatCivil:object.etatCivil,
+        pere:{
+          id:object.pere.id,
+        },
+        mere:{
+          id:object.mere.id,
+        }
     });
+
+    const [parents,setParents] = useState({
+      cinPere:object.pere.numeroIdentification,
+      cinMere:object.mere.numeroIdentification,
+      nomPere:object.pere.nom,
+      prenomPere:object.pere.prenom,
+      nomMere:object.mere.nom,
+      prenomMere:object.mere.prenom,
+    })
+
+    console.log(parents.cinMere);
+    const onParentInputChange = (e) => {
+      console.log(e.target.value);
+      setParents({...parents,[e.target.name]:e.target.value});
+    }
 
     const onInputChange = (e) => {
       setCitoyen({...citoyen,[e.target.name]:e.target.value});
     }
 
     const [response,setResponse]=useState({status : false,});
+
+    const fetchPere = (cinPere) => {
+      fetch(`http://localhost:8080/api/personne/cin/${cinPere}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        if (data) {
+          setParents({ ...parents, nomPere: data.nom, prenomPere: data.prenom });
+          setCitoyen({ ...citoyen, pere: {id : data.id } });
+        } else {
+          console.error("Invalid or empty response from the server");
+        }
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
+      });
+    }
+
+    const fetchMere = (cinMere) => {
+      fetch(`http://localhost:8080/api/personne/cin/${cinMere}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if(data) {
+          setParents({...parents, nomMere: data.nom, prenomMere:data.prenom});
+          setCitoyen({...citoyen , mere: {id : data.id } });
+        } else {
+          console.error("Invalid or empty response from the server");
+        }
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
+      });
+    }
+
+    const submitSearch = (e) => {
+      e.preventDefault();
+      fetchPere(parents.cinPere);
+      fetchMere(parents.cinMere);
+      return false;
+    };
  
     const onSubmit = async(e) => {
       e.preventDefault();
@@ -277,10 +344,71 @@ import { useLocation } from "react-router-dom";
                           </FormGroup>
                         </Col>
                       </Row>
-                    </div>
+                    </div><hr className="my-4" />
+                    <h6 className="heading-small text-muted mb-4">
+                      Informations sur les parents
+                    </h6>
+                      <div className="pl-lg-4">
+                        <Row>
+                          <Col lg="5" >
+                            <FormGroup>
+                              <label className="form-control-label" htmlFor="input-cin-pere">
+                                CIN du Père
+                              </label>
+                              <Input
+                                className="form-control-alternative"
+                                id="input-cin-pere"
+                                placeholder="CIN du Père"
+                                type="text"
+                                name="cinPere"
+                                onChange={(e) => onParentInputChange(e)}
+                                value={parents.cinPere}
+                              />
+                            </FormGroup>
+                            {parents.prenomPere || parents.nomPere ? (
+                              <div className="parent-info">
+                                <label className="parent-label">Père:</label>
+                                <span className="parent-name">
+                                  {parents.nomPere} {parents.prenomPere}
+                                </span>
+                              </div>
+                            ) : null}
+                          </Col>
+                          <Col lg="5">
+                            <FormGroup>
+                              <label className="form-control-label"
+                                     htmlFor="input-cin-mere">
+                                CIN de la Mère
+                              </label>
+                              <Input
+                                className="form-control-alternative"
+                                id="input-cin-mere"
+                                placeholder="CIN de la Mère"
+                                type="text"
+                                name="cinMere"
+                                onChange={(e) => onParentInputChange(e)}
+                                value={parents.cinMere}
+                              />
+                            </FormGroup>
+                            {parents.nomMere || parents.prenomMere ? (
+                              <div className="parent-info">
+                                <label className="parent-label">Mère:</label>
+                                <span className="parent-name">
+                                  {parents.nomMere} {parents.prenomMere}
+                                </span>
+                              </div>
+                            ) : null}
+                          </Col>
+                          <Col lg="2" className="d-flex align-items-center justify-content-center">
+                            <Button type="button" color="primary" onClick={submitSearch}>
+                                Rechercher
+                              </Button>
+                          </Col>
+                        </Row>
+                      </div>
                     <div className="text-right" xs="4">
-                        <Button type="submit" color="primary">
-                            Enregistrer les modifications 
+                        <Button type="submit" color="primary" onClick={onSubmit}>
+                            Enregistrer les données 
                         </Button>
                     </div>
                   </Form>
