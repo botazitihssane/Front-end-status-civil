@@ -24,6 +24,7 @@ import { Link } from "react-router-dom";
     });
 
     const [arrondissements,setArrondissements] = useState([]);
+    const [selectedArrondissement,setSelectedArrondissement] = useState("");
     const [villes,setVilles] = useState([]);
     const [selectedVille,setSelectedVille] = useState("");
 
@@ -47,7 +48,21 @@ import { Link } from "react-router-dom";
         setSelectedVille(e.target.value);
         console.log("selected ville " + e.target.value); 
         loadArrondissements(e.target.value);
-      }
+    }
+
+    const onArrondissementInputChange = (e) => {
+      const selectedArrondissementId = e.target.value;
+      setSelectedArrondissement(selectedArrondissementId);
+      setAnnexe({
+        ...annexe,
+        arrondissement: {
+          id:selectedArrondissementId,
+        },
+      });
+      console.log("selected arrondissement " + selectedArrondissementId); 
+      
+  }
+
     const [response,setResponse]=useState({status : false,});
   
     const onSubmit = async(e) => {
@@ -152,8 +167,8 @@ import { Link } from "react-router-dom";
                                     placeholder="Arrondissement"
                                     type="select"
                                     name="arrondissement"
-                                    onChange={(e)=>onInputChange(e)}
-                                    value={annexe.arrondissement.id}>
+                                    onChange={(e)=>onArrondissementInputChange(e)}
+                                    value={selectedArrondissement}>
                                         <option value="" disabled hidden>
                                             Arrondissement
                                         </option>

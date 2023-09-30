@@ -14,19 +14,21 @@ import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
   
-  const Annexe = () => {
+  const EditAnnexe = () => {
     const location = useLocation();
     const object = location.state.annexe;
+    console.log(object);
     const [annexe,setAnnexe] = useState({
-        id:object.id,
-        arrondissement:{
+      arrondissement:{
             id:object.arrondissement.id,
         },
         nomAnnexe:object.nomAnnexe,
         adresseAnnexe:object.adresseAnnexe,
+        id:object.id,
     });
 
     const [arrondissements,setArrondissements] = useState([]);
+    const [selectedArrondissement,setSelectedArrondissement] = useState("");
     const [villes,setVilles] = useState([]);
     const [selectedVille,setSelectedVille] = useState("");
 
@@ -48,30 +50,41 @@ import { Link, useLocation } from "react-router-dom";
 
     const onVilleInputChange = (e) => {
         setSelectedVille(e.target.value);
-        console.log("selected ville " + e.target.value); // WHy it gives me a null value here 
+        console.log("selected ville " + e.target.value); 
         loadArrondissements(e.target.value);
-      }
+    }
+
+    const onArrondissementInputChange = (e) => {
+        const selectedArrondissement = e.target.value;
+        setSelectedArrondissement(selectedArrondissement);
+        setAnnexe({
+            ...annexe,
+            arrondissement: {
+                id:selectedArrondissement,
+            },
+        });
+    }
     const [response,setResponse]=useState({status : false,});
   
     const onSubmit = async(e) => {
-        e.preventDefault();
-        let data = JSON.stringify(annexe);
-        console.log(data);
-        let head = {"content-type":"application/json"};
-        fetch('http://localhost:8080/api/annexe',{
-          method:"PUT",
-          headers:head,
-          body:data,
-        })
-        .then((response)=>response.json())
-        .then((data)=>{
-          setResponse(response);
-          console.log(response);
-        })
-        .catch((er)=>{
-          console.log(er);
-        });
-      }
+      e.preventDefault();
+      let data = JSON.stringify(annexe);
+      let head = { "Content-Type": "application/json" };
+      console.log(data);
+      fetch('http://localhost:8080/api/annexe/',{
+        method:"PUT",
+        headers:head,
+        body:data,
+      })
+      .then((response)=>response.json())
+      .then((data)=>{
+        setResponse(response);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    }
 
     const loadArrondissements = (ville) => {
         fetch(`http://localhost:8080/api/arrondissement/ville/${ville}`)
@@ -102,6 +115,9 @@ import { Link, useLocation } from "react-router-dom";
                     <Col xs="8">
                       <h3 className="mb-0">Annexe</h3>
                     </Col>
+                    <Col className="text-right" xs="4">
+                      <Link to={"/admin/viewAnnexes"} className="btn btn-primary">Liste des annexes</Link>
+                    </Col>
                   </Row>
                 </CardHeader>
                 <CardBody>
@@ -127,7 +143,9 @@ import { Link, useLocation } from "react-router-dom";
                                     name="ville"
                                     onChange={(e)=>onVilleInputChange(e)}
                                     value={selectedVille}>
-                                        <option value="">Ville</option>
+                                        <option value=" ">
+                                            Ville
+                                        </option>
                                         {villes.map((ville) => (
                                             <option key={ville} value={ville}>
                                                 {ville}
@@ -150,9 +168,11 @@ import { Link, useLocation } from "react-router-dom";
                                     placeholder="Arrondissement"
                                     type="select"
                                     name="arrondissement"
-                                    onChange={(e)=>onInputChange(e)}
-                                    value={annexe.arrondissement.id}>
-                                        <option value=""> Arrondissement </option>
+                                    onChange={(e)=>onArrondissementInputChange(e)}
+                                    value={selectedArrondissement}>
+                                        <option value="" disabled hidden>
+                                            Arrondissement
+                                        </option>
                                         {arrondissements.map((arrondissement) => (
                                             <option key={arrondissement.id} value={arrondissement.id}>
                                                 {arrondissement.nomArrondissement}
@@ -205,7 +225,7 @@ import { Link, useLocation } from "react-router-dom";
                     </div>
                     <div className="text-right" xs="4">
                         <Button type="submit" color="primary">
-                            Enregistrer les modifications 
+                            Enregistrer les données 
                         </Button>
                     </div>
                   </Form>
@@ -219,5 +239,5 @@ import { Link, useLocation } from "react-router-dom";
     );
   };
   
-  export default Annexe;
+  export default EditAnnexe;
   
