@@ -45,7 +45,7 @@ import { Link } from "react-router-dom";
 
     const onVilleInputChange = (e) => {
         setSelectedVille(e.target.value);
-        console.log("selected ville " + e.target.value); // WHy it gives me a null value here 
+        console.log("selected ville " + e.target.value); 
         loadArrondissements(e.target.value);
       }
     const [response,setResponse]=useState({status : false,});

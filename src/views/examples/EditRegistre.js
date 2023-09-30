@@ -1,6 +1,6 @@
 import UserHeader from "components/Headers/UserHeader";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Button,
   Card,
@@ -14,15 +14,19 @@ import {
   Container,
 } from "reactstrap";
 
-const Registere = () => {
+const EditRegistre = () => {
+    const location = useLocation();
+    const object = location.state.registre;
+
   const [annexes,setAnnexes] = useState([]);
   const [selectedAnnexe,setSelectedAnnexe] = useState("");
   const [registre,setRegistre] = useState({
+    id: object.id,
     annexe: {
-      id: "",
+      id: object.annexe.id,
     },
-    typeRegistre:"",
-    nomRegistre:""
+    typeRegistre:object.typeRegistre,
+    nomRegistre:object.nomRegistre
   })
   const [response,setResponse]=useState({status : false,});
  
@@ -56,7 +60,7 @@ const Registere = () => {
     console.log(data);
     let head = { "Content-Type": "application/json" };
     fetch('http://localhost:8080/api/registre',{
-      method:"POST",
+      method:"PUT",
       headers:head,
       body:data,
     })
@@ -90,11 +94,8 @@ const Registere = () => {
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="8">
-                    <h3 className="mb-0">Registre</h3>
+                    <h3 className="mb-0">Modifier le registre</h3>
                   </Col>
-                  <Col className="text-right" xs="4">
-                      <Link to={"/admin/viewRegistre"} className="btn btn-primary">Liste des registres</Link>
-                    </Col>
                 </Row>
               </CardHeader>
               <CardBody>
@@ -179,7 +180,7 @@ const Registere = () => {
                     </div>
                     <div className="text-right" xs="4">
                         <Button type="submit" color="primary">
-                            Enregistrer les données 
+                            Enregistrer les modifications 
                         </Button>
                     </div>
                 </Form>
@@ -192,4 +193,4 @@ const Registere = () => {
   );
 };
 
-export default Registere;
+export default EditRegistre;

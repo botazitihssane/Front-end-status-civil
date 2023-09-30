@@ -10,6 +10,8 @@ import EditOfficier from "views/examples/EditOfficier";
 import Annexe from "views/examples/Annexe";
 import ViewAnnexe from "views/examples/viewAnnexe";
 import EditAnnexe from "views/examples/EditAnnexe";
+import Viewregistre from "views/examples/ViewRegistre";
+import EditRegistre from "views/examples/EditRegistre";
 var routes = [
   {
     path: "/index",
@@ -44,6 +46,20 @@ var routes = [
     name: "Registere",
     icon: "ni ni-books text-pink",
     component: <Registere/>,
+    layout: "/admin",
+  },
+  {
+    path: "/viewRegistre",
+    name: "Liste des Registeres",
+    icon: "ni ni-books text-pink",
+    component: <Viewregistre/>,
+    layout: "/admin",
+  },
+  {
+    path: "/editRegistre",
+    name: "Modifier le registere",
+    icon: "ni ni-books text-pink",
+    component: <EditRegistre/>,
     layout: "/admin",
   },
   {
