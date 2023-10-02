@@ -216,7 +216,7 @@ const Sidebar = (props) => {
           {/* Navigation */}
           <Nav className="mb-md-3" navbar>
             <NavItem>
-              <NavLink href="">
+              <NavLink href={"/admin/acteNaissance"}>
                 <i className="ni ni-spaceship" />
                 Acte Naissance
               </NavLink>

@@ -14,6 +14,7 @@ import Viewregistre from "views/examples/ViewRegistre";
 import EditRegistre from "views/examples/EditRegistre";
 import ViewCitoyen from "views/examples/ViewCitoyen";
 import EditCitoyen from "views/examples/EditCitoyen";
+import ActeNaissance from "views/examples/ActeNaissance";
 var routes = [
   {
     path: "/index",
@@ -138,6 +139,13 @@ var routes = [
     name: "Modifier l'annexe",
     icon: "ni ni-building text-blue",
     component: <EditAnnexe />,
+    layout: "/admin",
+    hidden: true, 
+  },
+  {
+    path: "/acteNaissance",
+    name: "Acte Naissance",
+    component: <ActeNaissance />,
     layout: "/admin",
     hidden: true, 
   },
