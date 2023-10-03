@@ -15,6 +15,8 @@ import EditRegistre from "views/examples/EditRegistre";
 import ViewCitoyen from "views/examples/ViewCitoyen";
 import EditCitoyen from "views/examples/EditCitoyen";
 import ActeNaissance from "views/examples/ActeNaissance";
+import ActeMariage from "views/examples/ActeMariage";
+import ActeDeces from "views/examples/ActeDeces";
 var routes = [
   {
     path: "/index",
@@ -146,6 +148,20 @@ var routes = [
     path: "/acteNaissance",
     name: "Acte Naissance",
     component: <ActeNaissance />,
+    layout: "/admin",
+    hidden: true, 
+  },
+  {
+    path: "/acteMariage",
+    name: "Acte Mariage",
+    component: <ActeMariage />,
+    layout: "/admin",
+    hidden: true, 
+  },
+  {
+    path: "/acteDeces",
+    name: "Acte Deces",
+    component: <ActeDeces />,
     layout: "/admin",
     hidden: true, 
   },

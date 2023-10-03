@@ -222,15 +222,15 @@ const Sidebar = (props) => {
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink href="">
+              <NavLink href={"/admin/acteMariage"}>
                 <i className="ni ni-palette" />
                 Acte Mariage
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink href="">
+              <NavLink href={"/admin/acteDeces"}>
                 <i className="ni ni-ui-04" />
-                Certificat Deces
+                Acte Deces
               </NavLink>
             </NavItem>
           </Nav>
