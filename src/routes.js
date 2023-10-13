@@ -1,22 +1,29 @@
 import Index from "views/Index.js";
-import Arrondissement from "views/examples/Arrondissement";
-import Registere from "views/examples/Registere";
-import Officier from "views/examples/Officier";
-import Citoyen from "views/examples/Citoyen";
-import ViewArrondissement from "views/examples/ViewArrondissement";
-import EditArrondissement from "views/examples/EditArrondissement";
-import ViewOfficier from "views/examples/ViewOfficier";
-import EditOfficier from "views/examples/EditOfficier";
-import Annexe from "views/examples/Annexe";
-import ViewAnnexe from "views/examples/viewAnnexe";
-import EditAnnexe from "views/examples/EditAnnexe";
-import Viewregistre from "views/examples/ViewRegistre";
-import EditRegistre from "views/examples/EditRegistre";
-import ViewCitoyen from "views/examples/ViewCitoyen";
-import EditCitoyen from "views/examples/EditCitoyen";
-import ActeNaissance from "views/examples/ActeNaissance";
-import ActeMariage from "views/examples/ActeMariage";
-import ActeDeces from "views/examples/ActeDeces";
+import ActeDeces from "views/Actes/ActeDeces/AddActeDeces";
+import ActeMariage from "views/Actes/ActeMariage/AddActeMariage";
+import ActeNaissance from "views/Actes/ActeNaissance/AddActeNaissance";
+import Citoyen from "views/Personne/Citoyen/AddCitoyen";
+import EditCitoyen from "views/Personne/Citoyen/EditCitoyen";
+import ViewCitoyen from "views/Personne/Citoyen/ViewCitoyen";
+import Officier from "views/Personne/Officier/AddOfficier";
+import EditOfficier from "views/Personne/Officier/EditOfficier";
+import ViewOfficier from "views/Personne/Officier/ViewOfficier";
+import Annexe from "views/StructureOrganisationnelle/Annexe/AddAnnexe";
+import EditAnnexe from "views/StructureOrganisationnelle/Annexe/EditAnnexe";
+import ViewAnnexe from "views/StructureOrganisationnelle/Annexe/viewAnnexe";
+import Arrondissement from "views/StructureOrganisationnelle/Arrondissement/AddArrondissement";
+import EditArrondissement from "views/StructureOrganisationnelle/Arrondissement/EditArrondissement";
+import ViewArrondissement from "views/StructureOrganisationnelle/Arrondissement/ViewArrondissement";
+import Registere from "views/StructureOrganisationnelle/Registre/AddRegistere";
+import EditRegistre from "views/StructureOrganisationnelle/Registre/EditRegistre";
+import Viewregistre from "views/StructureOrganisationnelle/Registre/ViewRegistre";
+import Login from "views/Login/Login";
+import Register from "views/Register/Register";
+import Profile from "views/Login/Profile";
+import BoardUser from "views/Boards/BoardUser";
+import BoardAdmin from "views/Boards/BoardAdmin";
+import Home from "views/Boards/Home";
+import AuthForm from "views/Login/Login_Register";
 var routes = [
   {
     path: "/index",
@@ -30,6 +37,7 @@ var routes = [
     name: "Arrondissement",
     icon: "ni ni-istanbul text-gray",
     component: <Arrondissement />,
+
     layout: "/admin",
   },
   {
@@ -43,7 +51,7 @@ var routes = [
     path: "/registere",
     name: "Registere",
     icon: "ni ni-books text-pink",
-    component: <Registere/>,
+    component: <Registere />,
     layout: "/admin",
   },
   {
@@ -67,7 +75,7 @@ var routes = [
     icon: "ni ni-building text-blue",
     component: <ViewArrondissement />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
   {
     path: "/editArrondissement",
@@ -75,33 +83,33 @@ var routes = [
     icon: "ni ni-building text-blue",
     component: <EditArrondissement />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
- 
+
   {
     path: "/viewRegistre",
     name: "Liste des Registeres",
     icon: "ni ni-books text-pink",
-    component: <Viewregistre/>,
+    component: <Viewregistre />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
   {
     path: "/editRegistre",
     name: "Modifier le registere",
     icon: "ni ni-books text-pink",
-    component: <EditRegistre/>,
+    component: <EditRegistre />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
-  
+
   {
     path: "/viewCitoyens",
     name: "Liste des citoyens",
     icon: "ni ni-single-02 text-orange",
     component: <ViewCitoyen />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
   {
     path: "/editCitoyen",
@@ -109,16 +117,16 @@ var routes = [
     icon: "ni ni-single-02 text-orange",
     component: <EditCitoyen />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
-  
+
   {
     path: "/viewOfficier",
     name: "Liste des officiers",
     icon: "ni ni-badge text-yellow",
     component: <ViewOfficier />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
   {
     path: "/editOfficier",
@@ -126,7 +134,7 @@ var routes = [
     icon: "ni ni-badge text-yellow",
     component: <EditOfficier />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
   {
     path: "/viewAnnexes",
@@ -134,7 +142,7 @@ var routes = [
     icon: "ni ni-building text-blue",
     component: <ViewAnnexe />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
   {
     path: "/editAnnexe",
@@ -142,29 +150,77 @@ var routes = [
     icon: "ni ni-building text-blue",
     component: <EditAnnexe />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
   {
     path: "/acteNaissance",
     name: "Acte Naissance",
     component: <ActeNaissance />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
   {
     path: "/acteMariage",
     name: "Acte Mariage",
     component: <ActeMariage />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
   {
     path: "/acteDeces",
     name: "Acte Deces",
     component: <ActeDeces />,
     layout: "/admin",
-    hidden: true, 
+    hidden: true,
   },
-  
+  {
+    path: "/login",
+    name: "Login",
+    component: <Login />,
+    layout: "/auth",
+    hidden: true,
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: <Register />,
+    layout: "/auth",
+    hidden: true,
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: <Profile />,
+    layout: "/auth",
+    hidden: true,
+  },
+  {
+    path: "/BoardUser",
+    name: "BoardUser",
+    component: <BoardUser />,
+    layout: "/admin",
+    hidden: true,
+  },
+  {
+    path: "/BoardAdmin",
+    name: "BoardAdmin",
+    component: <BoardAdmin />,
+    layout: "/admin",
+    hidden: true,
+  },
+  {
+    path: "/home",
+    name: "Home",
+    component: <Home />,
+    layout: "/admin",
+    hidden: true,
+  },
+  {
+    path: "/loginregister",
+    name: "LoginRegister",
+    component: <AuthForm />,
+    layout: "/auth",
+    hidden: true,
+  },
 ];
 export default routes;
