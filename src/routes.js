@@ -18,12 +18,10 @@ import Registere from "views/StructureOrganisationnelle/Registre/AddRegistere";
 import EditRegistre from "views/StructureOrganisationnelle/Registre/EditRegistre";
 import Viewregistre from "views/StructureOrganisationnelle/Registre/ViewRegistre";
 import Login from "views/Login/Login";
-import Register from "views/Register/Register";
-import Profile from "views/Login/Profile";
-import BoardUser from "views/Boards/BoardUser";
-import BoardAdmin from "views/Boards/BoardAdmin";
-import Home from "views/Boards/Home";
-import AuthForm from "views/Login/Login_Register";
+import Register from "views/Login/Register";
+import ViewActeNaissance from "views/Actes/ActeNaissance/ViewActeNaissance";
+import ViewActeMariage from "views/Actes/ActeMariage/ViewActeMariage";
+import ViewActeDeces from "views/Actes/ActeDeces/ViewActeDeces";
 var routes = [
   {
     path: "/index",
@@ -37,7 +35,6 @@ var routes = [
     name: "Arrondissement",
     icon: "ni ni-istanbul text-gray",
     component: <Arrondissement />,
-
     layout: "/admin",
   },
   {
@@ -188,38 +185,24 @@ var routes = [
     hidden: true,
   },
   {
-    path: "/profile",
-    name: "Profile",
-    component: <Profile />,
-    layout: "/auth",
-    hidden: true,
-  },
-  {
-    path: "/BoardUser",
-    name: "BoardUser",
-    component: <BoardUser />,
+    path: "/ListeActeNaissance",
+    name: "ViewActeNaissance",
+    component: <ViewActeNaissance />,
     layout: "/admin",
     hidden: true,
   },
   {
-    path: "/BoardAdmin",
-    name: "BoardAdmin",
-    component: <BoardAdmin />,
+    path: "/ListeActeMariage",
+    name: "ViewActeMariage",
+    component: <ViewActeMariage />,
     layout: "/admin",
     hidden: true,
   },
   {
-    path: "/home",
-    name: "Home",
-    component: <Home />,
+    path: "/ListeActeDeces",
+    name: "ViewActeDeces",
+    component: <ViewActeDeces />,
     layout: "/admin",
-    hidden: true,
-  },
-  {
-    path: "/loginregister",
-    name: "LoginRegister",
-    component: <AuthForm />,
-    layout: "/auth",
     hidden: true,
   },
 ];

@@ -10,9 +10,10 @@ import {
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
-import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
-import AuthService from "service/auth.service";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 const required = (value) => {
   if (!value) {
     return (
@@ -23,8 +24,6 @@ const required = (value) => {
   }
 };
 const Login = () => {
-  let navigate = useNavigate();
-
   const form = useRef();
   const checkBtn = useRef();
 
@@ -32,6 +31,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const onChangeUsername = (e) => {
     const username = e.target.value;
@@ -43,33 +43,24 @@ const Login = () => {
     setPassword(password);
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setMessage("");
-    setLoading(true);
-
-    form.current.validateAll();
-
-    if (checkBtn.current.context._errors.length === 0) {
-      AuthService.login(username, password).then(
-        () => {
-          navigate("/admin/profile");
-          window.location.reload();
-        },
-        (error) => {
-          const resMessage =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
-
-          setLoading(false);
-          setMessage(resMessage);
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/signin",
+        {
+          username,
+          password,
         }
       );
-    } else {
-      setLoading(false);
+
+      const token = response.data.token;
+      Cookies.set("civilStatus", token, { path: "/api", expires: 1 });
+      localStorage.setItem("user", JSON.stringify(response.data));
+      navigate("/admin/index");
+    } catch (error) {
+      console.error("Login failed. Check your credentials.");
+      console.error(error);
     }
   };
 

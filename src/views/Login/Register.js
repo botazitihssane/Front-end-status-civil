@@ -3,7 +3,6 @@ import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import { isEmail } from "validator";
-import AuthService from "service/auth.service";
 import {
   Card,
   CardBody,
@@ -13,6 +12,8 @@ import {
   InputGroupAddon,
   InputGroupText,
 } from "reactstrap";
+import axios from "axios"; // Import Axios for making HTTP requests
+import { useNavigate } from "react-router-dom";
 
 const required = (value) => {
   if (!value) {
@@ -33,6 +34,7 @@ const validEmail = (value) => {
     );
   }
 };
+
 const vusername = (value) => {
   if (value.length < 3 || value.length > 20) {
     return (
@@ -52,6 +54,7 @@ const vpassword = (value) => {
     );
   }
 };
+
 const Register = () => {
   const form = useRef();
   const checkBtn = useRef();
@@ -61,6 +64,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [successful, setSuccessful] = useState(false);
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const onChangeUsername = (e) => {
     const username = e.target.value;
@@ -77,33 +81,24 @@ const Register = () => {
     setPassword(password);
   };
 
-  const handleRegister = (e) => {
+  const handleRegistration = async (e) => {
     e.preventDefault();
-    setMessage("");
-    setSuccessful(false);
-
-    form.current.validateAll();
-
-    if (checkBtn.current.context._errors.length === 0) {
-      AuthService.register(username, email, password).then(
-        (response) => {
-          setMessage(response.data.message);
-          setSuccessful(true);
-        },
-        (error) => {
-          const resMessage =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
-
-          setMessage(resMessage);
-          setSuccessful(false);
-        }
-      );
-    }
+    axios
+      .post("http://localhost:8080/api/auth/signup", {
+        username,
+        email,
+        password,
+      })
+      .then((response) => {
+        console.log(response);
+        navigate("auth/login");
+      })
+      .catch((error) => {
+        console.log(error);
+        setMessage("Registration failed. Please check your information.");
+      });
   };
+
   return (
     <>
       <Col lg="5" md="7">
@@ -113,7 +108,7 @@ const Register = () => {
               <small>Créer un compte</small>
             </div>
             <div className="col-md-12">
-              <Form onSubmit={handleRegister} ref={form}>
+              <Form onSubmit={handleRegistration} ref={form}>
                 {!successful && (
                   <div>
                     <FormGroup className="mb-3">
@@ -154,7 +149,6 @@ const Register = () => {
                         />
                       </InputGroup>
                     </FormGroup>
-
                     <FormGroup className="mb-3">
                       <InputGroup className="input-group-alternative">
                         <InputGroupAddon addonType="prepend">

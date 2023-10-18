@@ -14,24 +14,24 @@ import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
 
 const ActeNaissance = () => {
+  const [selectedDeclarant, setSelectedDeclarant] = useState("");
   const [acteNaissance, setActeNaissance] = useState({
     typeEnregistrement: "acteNaissance",
     dateEnregistrement: "",
     lieuEnregistrement: "",
-    registreAppartenant: {
-      id: "",
-    },
-    officierValidant: {
-      id: "",
-    },
-    nouveauNee: {
-      id: "",
-    },
+    registre: "",
+    officierValidant: "",
+    nom: "",
+    prenom: "",
     typeNaissance: "",
-    declarant: {
-      id: "",
-    },
-    relationAvecNouveauNee: "",
+    declarant: selectedDeclarant,
+    relationAvecNouveauNe: "",
+    pere: "",
+    mere: "",
+    sexe: "",
+    nationalite: "",
+    dateNaissance: "",
+    lieuNaissance: "",
   });
 
   const [declarant, setDeclarant] = useState({
@@ -41,8 +41,13 @@ const ActeNaissance = () => {
   });
   const [personne, setPersonne] = useState({
     id: "",
+    nom: "",
+    prenom: "",
   });
-  const [selectedLieu, setSelectedLieu] = useState("");
+  const [selectedLieu, setSelectedLieu] = useState({
+    id: "",
+    name: "",
+  });
   const [lieux, setLieux] = useState([]);
   const [registres, setRegistres] = useState([]);
   const [selectedRegistre, setSelectedRegistre] = useState("");
@@ -53,22 +58,17 @@ const ActeNaissance = () => {
   const onOfficierInputChange = (e) => {
     console.log(e.target.value);
     setSelectedOfficier({ ...selectedOfficier, id: e.target.value });
-    setActeNaissance({
-      ...acteNaissance,
-      officierValidant: { id: e.target.value },
-    });
+    setActeNaissance({ ...acteNaissance, officierValidant: e.target.value });
   };
 
   const onPersonneInputChange = (e) => {
     console.log(e.target.value);
     setPersonne({ ...personne, id: e.target.value });
-    setActeNaissance({ ...acteNaissance, nouveauNee: { id: e.target.value } });
   };
 
   const onDeclarantInputChange = (e) => {
     console.log(e.target.value);
     setDeclarant({ ...declarant, cin: e.target.value });
-    setActeNaissance({ ...acteNaissance, declarant: { id: e.target.value } });
   };
 
   const onRegistreInputChange = (e) => {
@@ -76,7 +76,7 @@ const ActeNaissance = () => {
     setSelectedRegistre({ ...selectedRegistre, nom: e.target.value });
     setActeNaissance({
       ...acteNaissance,
-      registreAppartenant: { id: e.target.value },
+      registre: e.target.value,
     });
   };
 
@@ -84,12 +84,50 @@ const ActeNaissance = () => {
     setActeNaissance({ ...acteNaissance, [e.target.name]: e.target.value });
   };
 
+  const fetchPere = (id) => {
+    fetch(`http://localhost:8080/api/personne/${id}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setActeNaissance((prevActeDeces) => ({
+          ...prevActeDeces,
+          pere: data.nom + " " + data.prenom,
+        }));
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
+      });
+  };
+
+  const fetchMere = (id) => {
+    fetch(`http://localhost:8080/api/personne/${id}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setActeNaissance((prevActeDeces) => ({
+          ...prevActeDeces,
+          mere: data.nom + " " + data.prenom,
+        }));
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
+      });
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
     let data = JSON.stringify(acteNaissance);
     console.log(data);
     let head = { "Content-Type": "application/json" };
-    fetch("http://localhost:8080/api/acteNaissance", {
+    fetch("http://localhost:8080/api/actes/naissance/transactions", {
       method: "POST",
       headers: head,
       body: data,
@@ -97,7 +135,7 @@ const ActeNaissance = () => {
       .then((response) => response.json())
       .then((data) => {
         setResponse(response);
-        console.log(response);
+        console.log(data);
       })
       .catch((error) => {
         console.error(error);
@@ -111,14 +149,15 @@ const ActeNaissance = () => {
   };
 
   const onLieuInputChange = (e) => {
-    const selectedLieu = e.target.value;
-    console.log(e.target.value);
-    setSelectedLieu(selectedLieu);
+    const selectedLieuId = e.target.value;
+    const selectedLieuName = e.target.options[e.target.selectedIndex].text;
+    setSelectedLieu({ id: selectedLieuId, name: selectedLieuName });
     setActeNaissance({
       ...acteNaissance,
-      lieuEnregistrement: selectedLieu,
+      lieuEnregistrement: selectedLieuName,
     });
-    loadRegistres(selectedLieu);
+    loadRegistres(selectedLieuId);
+    console.log(selectedLieuName);
   };
 
   const loadRegistres = (annexe) => {
@@ -138,7 +177,19 @@ const ActeNaissance = () => {
   const loadPersonne = (id) => {
     fetch(`http://localhost:8080/api/personne/${id}`)
       .then((response) => response.json())
-      .then((data) => setPersonne(data));
+      .then((data) => {
+        setActeNaissance((prevActeNaissance) => ({
+          ...prevActeNaissance,
+          nom: data.nom,
+          prenom: data.prenom,
+          sexe: data.sexe,
+          nationalite: data.nationalite,
+          dateNaissance: data.dateNaissance,
+          lieuNaissance: data.lieuNaissance,
+        }));
+        fetchPere(data.pere.id);
+        fetchMere(data.mere.id);
+      });
   };
 
   const loadOfficiers = () => {
@@ -149,23 +200,14 @@ const ActeNaissance = () => {
 
   const fetchDeclarant = (cin) => {
     fetch(`http://localhost:8080/api/personne/cin/${cin}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
-        console.log(data);
-        if (data) {
-          setDeclarant({ ...declarant, nom: data.nom, prenom: data.prenom });
-          setActeNaissance({ ...acteNaissance, declarant: { id: data.id } });
-        } else {
-          console.error("Invalid or empty response from the server");
-        }
-      })
-      .catch((error) => {
-        console.error("Fetch error:", error);
+        const fullName = data.nom + " " + data.prenom;
+        setSelectedDeclarant(fullName);
+        setActeNaissance((prevActeNaissance) => ({
+          ...prevActeNaissance,
+          declarant: fullName,
+        }));
       });
   };
 
@@ -192,7 +234,7 @@ const ActeNaissance = () => {
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="8">
-                    <h3 className="mb-0">Annexe</h3>
+                    <h3 className="mb-0">Ajouter un acte de naissance</h3>
                   </Col>
                 </Row>
               </CardHeader>
@@ -237,7 +279,7 @@ const ActeNaissance = () => {
                             type="select"
                             name="lieuEnregistrement"
                             onChange={(e) => onLieuInputChange(e)}
-                            value={selectedLieu}
+                            value={selectedLieu.id}
                           >
                             <option value="" disabled hidden>
                               Lieu d'enregistrement
@@ -256,22 +298,25 @@ const ActeNaissance = () => {
                         <FormGroup>
                           <label
                             className="form-control-label"
-                            htmlFor="input-registreAppartenant"
+                            htmlFor="input-registre"
                           >
                             Registre Appartenant
                           </label>
                           <Input
                             className="form-control-alternative"
-                            id="input-nom-registreAppartenant"
+                            id="input-nom-registre"
                             placeholder="Registre Appartenant "
                             type="select"
-                            name="registreAppartenant"
+                            name="registre"
                             onChange={(e) => onRegistreInputChange(e)}
                             value={selectedRegistre.nomRegistre}
                           >
                             <option value="">Registre Appartenant</option>
                             {registres.map((registre) => (
-                              <option key={registre.id} value={registre.id}>
+                              <option
+                                key={registre.id}
+                                value={registre.nomRegistre}
+                              >
                                 {registre.nomRegistre}
                               </option>
                             ))}
@@ -297,7 +342,17 @@ const ActeNaissance = () => {
                           >
                             <option value="">Officier Validant</option>
                             {officiers.map((officier) => (
-                              <option key={officier.id} value={officier.id}>
+                              <option
+                                key={officier.id}
+                                value={
+                                  officier.grade +
+                                  " " +
+                                  "" +
+                                  officier.nom +
+                                  " " +
+                                  officier.prenom
+                                }
+                              >
                                 {officier.grade} {officier.nom}{" "}
                                 {officier.prenom}
                               </option>
@@ -311,25 +366,25 @@ const ActeNaissance = () => {
                         <FormGroup>
                           <label
                             className="form-control-label"
-                            htmlFor="input-nouveauNee"
+                            htmlFor="input-nouveauNe"
                           >
                             Nouveau nee
                           </label>
                           <Input
                             className="form-control-alternative"
-                            id="input-nom-nouveauNee"
+                            id="input-nom-nouveauNe"
                             placeholder="Nouveau né(e)"
-                            type="text"
+                            type="number"
                             name="idPersonne"
                             onChange={(e) => onPersonneInputChange(e)}
                             value={personne.id}
                           />
                         </FormGroup>
-                        {personne.prenom || personne.nom ? (
+                        {acteNaissance.prenom || acteNaissance.nom ? (
                           <div>
                             <label>Nouveau Né(e): </label>
                             <span>
-                              {personne.nom} {personne.prenom}
+                              {acteNaissance.nom} {acteNaissance.prenom}
                             </span>
                           </div>
                         ) : null}
@@ -377,7 +432,7 @@ const ActeNaissance = () => {
                           <div>
                             <label>Declarant: </label>
                             <span>
-                              {declarant.nom} {declarant.prenom}
+                              {selectedDeclarant.nom} {selectedDeclarant.prenom}
                             </span>
                           </div>
                         ) : null}
@@ -386,18 +441,18 @@ const ActeNaissance = () => {
                         <FormGroup>
                           <label
                             className="form-control-label"
-                            htmlFor="input-relationAvecNouveauNee"
+                            htmlFor="input-relationAvecNouveauNe"
                           >
                             Relation avec le nouveau né(e)
                           </label>
                           <Input
                             className="form-control-alternative"
-                            id="input-relationAvecNouveauNee"
+                            id="input-relationAvecNouveauNe"
                             placeholder="Relation avec le nouveau né(e)"
-                            name="relationAvecNouveauNee"
+                            name="relationAvecNouveauNe"
                             type="text"
                             onChange={(e) => onInputChange(e)}
-                            value={acteNaissance.relationAvecNouveauNee}
+                            value={acteNaissance.relationAvecNouveauNe}
                           />
                         </FormGroup>
                       </Col>

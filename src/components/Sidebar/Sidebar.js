@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink as NavLinkRRD, Link } from "react-router-dom";
+import { NavLink as NavLinkRRD, Link, useNavigate } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
 
@@ -110,51 +110,15 @@ const Sidebar = (props) => {
         {/* User */}
         <Nav className="align-items-center d-md-none">
           <UncontrolledDropdown nav>
-            <DropdownToggle nav className="nav-link-icon">
-              <i className="ni ni-bell-55" />
-            </DropdownToggle>
-            <DropdownMenu
-              aria-labelledby="navbar-default_dropdown_1"
-              className="dropdown-menu-arrow"
-              right
-            >
-              <DropdownItem>Action</DropdownItem>
-              <DropdownItem>Another action</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem>Something else here</DropdownItem>
-            </DropdownMenu>
-          </UncontrolledDropdown>
-          <UncontrolledDropdown nav>
             <DropdownToggle nav>
               <Media className="align-items-center">
-                <span className="avatar avatar-sm rounded-circle">
-                </span>
+                <span className="avatar avatar-sm rounded-circle"></span>
               </Media>
             </DropdownToggle>
             <DropdownMenu className="dropdown-menu-arrow" right>
-              <DropdownItem className="noti-title" header tag="div">
-                <h6 className="text-overflow m-0">Welcome!</h6>
-              </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-single-02" />
-                <span>My profile</span>
-              </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-settings-gear-65" />
-                <span>Settings</span>
-              </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-calendar-grid-58" />
-                <span>Activity</span>
-              </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-support-16" />
-                <span>Support</span>
-              </DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
+              <DropdownItem href="#pablo">
                 <i className="ni ni-user-run" />
-                <span>Logout</span>
+                <span>Se déconnecter</span>
               </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
@@ -190,8 +154,9 @@ const Sidebar = (props) => {
             </Row>
           </div>
           {/* Form */}
-          
-          <Form className="mt-4 mb-3 d-md-none">
+
+          {/* 
+         <Form className="mt-4 mb-3 d-md-none">
             <InputGroup className="input-group-rounded input-group-merge">
               <Input
                 aria-label="Search"
@@ -205,8 +170,8 @@ const Sidebar = (props) => {
                 </InputGroupText>
               </InputGroupAddon>
             </InputGroup>
-          </Form>
-                  
+          </Form>*/}
+
           {/* Navigation */}
           <Nav navbar>{createLinks(routes)}</Nav>
           {/* Divider */}
@@ -231,6 +196,24 @@ const Sidebar = (props) => {
               <NavLink href={"/admin/acteDeces"}>
                 <i className="ni ni-ui-04" />
                 Acte Deces
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href={"/admin/ListeActeDeces"}>
+                <i className="ni ni-ui-04" />
+                Liste Acte Deces
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href={"/admin/ListeActeMariage"}>
+                <i className="ni ni-ui-04" />
+                Liste Acte Mariage
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href={"/admin/ListeActeNaissance"}>
+                <i className="ni ni-ui-04" />
+                Liste Acte Naissance
               </NavLink>
             </NavItem>
           </Nav>
