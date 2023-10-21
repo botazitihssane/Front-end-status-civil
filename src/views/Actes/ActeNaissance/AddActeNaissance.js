@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
-
+const { default: Web3 } = require("web3");
 const ActeNaissance = () => {
   const [selectedDeclarant, setSelectedDeclarant] = useState("");
   const [acteNaissance, setActeNaissance] = useState({
@@ -53,8 +53,241 @@ const ActeNaissance = () => {
   const [selectedRegistre, setSelectedRegistre] = useState("");
   const [officiers, setOfficiers] = useState([]);
   const [selectedOfficier, setSelectedOfficier] = useState("");
-  const [response, setResponse] = useState({ status: false });
+  //const [response, setResponse] = useState({ status: false });
 
+  const interactWithBlockChain = async (acteData) => {
+    const web3 = new Web3(
+      new Web3.providers.HttpProvider("http://localhost:7545")
+    );
+    const abi = [
+      {
+        constant: true,
+        inputs: [
+          {
+            name: "",
+            type: "uint256",
+          },
+        ],
+        name: "record",
+        outputs: [
+          {
+            name: "id",
+            type: "uint256",
+          },
+          {
+            name: "officierValidant",
+            type: "string",
+          },
+          {
+            name: "nom",
+            type: "string",
+          },
+          {
+            name: "prenom",
+            type: "string",
+          },
+          {
+            name: "pere",
+            type: "string",
+          },
+          {
+            name: "mere",
+            type: "string",
+          },
+          {
+            name: "sexe",
+            type: "string",
+          },
+          {
+            name: "lieuNaissance",
+            type: "string",
+          },
+          {
+            name: "dateNaissance",
+            type: "string",
+          },
+          {
+            name: "nationalite",
+            type: "string",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: "recordCount",
+        outputs: [
+          {
+            name: "",
+            type: "uint256",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: true,
+            name: "id",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            name: "officierValidant",
+            type: "string",
+          },
+          {
+            indexed: false,
+            name: "timestamp",
+            type: "uint256",
+          },
+        ],
+        name: "ActeAjoute",
+        type: "event",
+      },
+      {
+        constant: false,
+        inputs: [
+          {
+            name: "_officierValidant",
+            type: "string",
+          },
+          {
+            name: "_nom",
+            type: "string",
+          },
+          {
+            name: "_prenom",
+            type: "string",
+          },
+          {
+            name: "_sexe",
+            type: "string",
+          },
+          {
+            name: "_lieuNaissance",
+            type: "string",
+          },
+          {
+            name: "_dateNaissance",
+            type: "string",
+          },
+          {
+            name: "_nationalite",
+            type: "string",
+          },
+          {
+            name: "_pere",
+            type: "string",
+          },
+          {
+            name: "_mere",
+            type: "string",
+          },
+        ],
+        name: "ajouterActe",
+        outputs: [],
+        payable: false,
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        constant: true,
+        inputs: [
+          {
+            name: "_id",
+            type: "uint256",
+          },
+        ],
+        name: "getActe",
+        outputs: [
+          {
+            components: [
+              {
+                name: "id",
+                type: "uint256",
+              },
+              {
+                name: "officierValidant",
+                type: "string",
+              },
+              {
+                name: "nom",
+                type: "string",
+              },
+              {
+                name: "prenom",
+                type: "string",
+              },
+              {
+                name: "pere",
+                type: "string",
+              },
+              {
+                name: "mere",
+                type: "string",
+              },
+              {
+                name: "sexe",
+                type: "string",
+              },
+              {
+                name: "lieuNaissance",
+                type: "string",
+              },
+              {
+                name: "dateNaissance",
+                type: "string",
+              },
+              {
+                name: "nationalite",
+                type: "string",
+              },
+            ],
+            name: "",
+            type: "tuple",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+    ];
+    const contractAddress = "0x9546a8f4738b33DBD9EFf9fBDe32c6D721C76552";
+    const MyContract = new web3.eth.Contract(abi, contractAddress);
+
+    const providersAccounts = await web3.eth.getAccounts();
+    const defaultAccount = providersAccounts[0];
+    try {
+      const tx = await MyContract.methods
+        .ajouterActe(
+          acteData.officierValidant,
+          acteData.nom,
+          acteData.prenom,
+          acteData.sexe,
+          acteData.lieuNaissance,
+          acteData.dateNaissance,
+          acteData.nationalite,
+          acteData.pere,
+          acteData.mere
+        )
+        .send({
+          from: defaultAccount,
+          gas: 400000,
+          gasPrice: 10000000000,
+        });
+
+      console.log("Transaction Hash: " + tx.transactionHash);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const onOfficierInputChange = (e) => {
     console.log(e.target.value);
     setSelectedOfficier({ ...selectedOfficier, id: e.target.value });
@@ -124,7 +357,8 @@ const ActeNaissance = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    let data = JSON.stringify(acteNaissance);
+    interactWithBlockChain(acteNaissance);
+    /* let data = JSON.stringify(acteNaissance);
     console.log(data);
     let head = { "Content-Type": "application/json" };
     fetch("http://localhost:8080/api/actes/naissance/transactions", {
@@ -139,7 +373,7 @@ const ActeNaissance = () => {
       })
       .catch((error) => {
         console.error(error);
-      });
+      });*/
   };
 
   const loadLieux = () => {

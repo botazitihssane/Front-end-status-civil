@@ -11,12 +11,251 @@ import {
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
-
+const { default: Web3 } = require("web3");
 const ViewActeNaissance = () => {
-  const [acteNaissance, setActeNaissance] = useState([]);
+  const [acteNaissance, setActeNaissance] = useState({
+    id: "",
+    nom: "",
+    prenom: "",
+    dateNaissance: "",
+    lieuNaissance: "",
+    sexe: "",
+    nationalite: "",
+    pere: "",
+    mere: "",
+  });
+  const interactWithBlockchain = async () => {
+    const web3 = new Web3(
+      new Web3.providers.HttpProvider("http://localhost:7545")
+    );
 
+    const abi = [
+      {
+        constant: true,
+        inputs: [
+          {
+            name: "",
+            type: "uint256",
+          },
+        ],
+        name: "record",
+        outputs: [
+          {
+            name: "id",
+            type: "uint256",
+          },
+          {
+            name: "officierValidant",
+            type: "string",
+          },
+          {
+            name: "nom",
+            type: "string",
+          },
+          {
+            name: "prenom",
+            type: "string",
+          },
+          {
+            name: "pere",
+            type: "string",
+          },
+          {
+            name: "mere",
+            type: "string",
+          },
+          {
+            name: "sexe",
+            type: "string",
+          },
+          {
+            name: "lieuNaissance",
+            type: "string",
+          },
+          {
+            name: "dateNaissance",
+            type: "string",
+          },
+          {
+            name: "nationalite",
+            type: "string",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: "recordCount",
+        outputs: [
+          {
+            name: "",
+            type: "uint256",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: true,
+            name: "id",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            name: "officierValidant",
+            type: "string",
+          },
+          {
+            indexed: false,
+            name: "timestamp",
+            type: "uint256",
+          },
+        ],
+        name: "ActeAjoute",
+        type: "event",
+      },
+      {
+        constant: false,
+        inputs: [
+          {
+            name: "_officierValidant",
+            type: "string",
+          },
+          {
+            name: "_nom",
+            type: "string",
+          },
+          {
+            name: "_prenom",
+            type: "string",
+          },
+          {
+            name: "_sexe",
+            type: "string",
+          },
+          {
+            name: "_lieuNaissance",
+            type: "string",
+          },
+          {
+            name: "_dateNaissance",
+            type: "string",
+          },
+          {
+            name: "_nationalite",
+            type: "string",
+          },
+          {
+            name: "_pere",
+            type: "string",
+          },
+          {
+            name: "_mere",
+            type: "string",
+          },
+        ],
+        name: "ajouterActe",
+        outputs: [],
+        payable: false,
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        constant: true,
+        inputs: [
+          {
+            name: "_id",
+            type: "uint256",
+          },
+        ],
+        name: "getActe",
+        outputs: [
+          {
+            components: [
+              {
+                name: "id",
+                type: "uint256",
+              },
+              {
+                name: "officierValidant",
+                type: "string",
+              },
+              {
+                name: "nom",
+                type: "string",
+              },
+              {
+                name: "prenom",
+                type: "string",
+              },
+              {
+                name: "pere",
+                type: "string",
+              },
+              {
+                name: "mere",
+                type: "string",
+              },
+              {
+                name: "sexe",
+                type: "string",
+              },
+              {
+                name: "lieuNaissance",
+                type: "string",
+              },
+              {
+                name: "dateNaissance",
+                type: "string",
+              },
+              {
+                name: "nationalite",
+                type: "string",
+              },
+            ],
+            name: "",
+            type: "tuple",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+    ];
+    const contractAddress = "0x9546a8f4738b33DBD9EFf9fBDe32c6D721C76552";
+    const MyContract = new web3.eth.Contract(abi, contractAddress);
+
+    const providersAccounts = await web3.eth.getAccounts();
+    const defaultAccount = providersAccounts[0];
+
+    try {
+      const acteId = 2;
+      const acteData = await MyContract.methods.getActe(acteId).call();
+      setActeNaissance({
+        id: acteId,
+        nom: acteData.nom,
+        prenom: acteData.prenom,
+        dateNaissance: acteData.dateNaissance,
+        lieuNaissance: acteData.lieuNaissance,
+        sexe: acteData.sexe,
+        nationalite: acteData.nationalite,
+        pere: acteData.pere,
+        mere: acteData.mere,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const loadActe = () => {
-    fetch(`http://localhost:8080/api/actes/naissance/transactions/id/${6}`)
+    interactWithBlockchain();
+    /*  fetch(`http://localhost:8080/api/actes/naissance/transactions/id/${6}`)
       .then((response) => response.json())
       .then((data) => {
         setActeNaissance(data);
@@ -24,7 +263,7 @@ const ViewActeNaissance = () => {
       })
       .catch((error) => {
         console.error(error);
-      });
+      });*/
   };
   useEffect(() => {
     loadActe();
