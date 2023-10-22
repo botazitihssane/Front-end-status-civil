@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
-
+const { default: Web3 } = require("web3");
 const ActeMariage = () => {
   const [acteMariage, setActeMariage] = useState({
     typeEnregistrement: "acteMariage",
@@ -193,8 +193,9 @@ const ActeMariage = () => {
   };
 
   const onSubmit = async (e) => {
-    console.log(acteMariage);
     e.preventDefault();
+    interactWithBlockChain(acteMariage);
+    /* 
     let data = JSON.stringify(acteMariage);
     console.log(data);
     let head = { "Content-Type": "application/json" };
@@ -214,9 +215,242 @@ const ActeMariage = () => {
       })
       .catch((error) => {
         console.error(error);
-      });
+      });*/
   };
 
+  const interactWithBlockChain = async (acteData) => {
+    const web3 = new Web3(
+      new Web3.providers.HttpProvider("http://localhost:7545")
+    );
+    const abi = [
+      {
+        constant: true,
+        inputs: [
+          {
+            name: "",
+            type: "uint256",
+          },
+        ],
+        name: "record",
+        outputs: [
+          {
+            name: "id",
+            type: "uint256",
+          },
+          {
+            name: "officierValidant",
+            type: "string",
+          },
+          {
+            name: "lieuMariage",
+            type: "string",
+          },
+          {
+            name: "dateMariage",
+            type: "string",
+          },
+          {
+            name: "epouse",
+            type: "string",
+          },
+          {
+            name: "epoux",
+            type: "string",
+          },
+          {
+            name: "mereEpoux",
+            type: "string",
+          },
+          {
+            name: "pereEpoux",
+            type: "string",
+          },
+          {
+            name: "mereEpouse",
+            type: "string",
+          },
+          {
+            name: "pereEpouse",
+            type: "string",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: "recordCount",
+        outputs: [
+          {
+            name: "",
+            type: "uint256",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: true,
+            name: "id",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            name: "officierValidant",
+            type: "string",
+          },
+          {
+            indexed: false,
+            name: "timestamp",
+            type: "uint256",
+          },
+        ],
+        name: "ActeAjoute",
+        type: "event",
+      },
+      {
+        constant: false,
+        inputs: [
+          {
+            name: "_officierValidant",
+            type: "string",
+          },
+          {
+            name: "_lieuMariage",
+            type: "string",
+          },
+          {
+            name: "_dateMariage",
+            type: "string",
+          },
+          {
+            name: "_epouse",
+            type: "string",
+          },
+          {
+            name: "_epoux",
+            type: "string",
+          },
+          {
+            name: "_mereEpoux",
+            type: "string",
+          },
+          {
+            name: "_pereEpoux",
+            type: "string",
+          },
+          {
+            name: "_mereEpouse",
+            type: "string",
+          },
+          {
+            name: "_pereEpouse",
+            type: "string",
+          },
+        ],
+        name: "ajouterActe",
+        outputs: [],
+        payable: false,
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        constant: true,
+        inputs: [
+          {
+            name: "_id",
+            type: "uint256",
+          },
+        ],
+        name: "getActe",
+        outputs: [
+          {
+            components: [
+              {
+                name: "id",
+                type: "uint256",
+              },
+              {
+                name: "officierValidant",
+                type: "string",
+              },
+              {
+                name: "lieuMariage",
+                type: "string",
+              },
+              {
+                name: "dateMariage",
+                type: "string",
+              },
+              {
+                name: "epouse",
+                type: "string",
+              },
+              {
+                name: "epoux",
+                type: "string",
+              },
+              {
+                name: "mereEpoux",
+                type: "string",
+              },
+              {
+                name: "pereEpoux",
+                type: "string",
+              },
+              {
+                name: "mereEpouse",
+                type: "string",
+              },
+              {
+                name: "pereEpouse",
+                type: "string",
+              },
+            ],
+            name: "",
+            type: "tuple",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+    ];
+    const contractAddress = "0xd7e6EE8efCfc491bBEB02F675a40317EAe584645";
+    const MyContract = new web3.eth.Contract(abi, contractAddress);
+
+    const providersAccounts = await web3.eth.getAccounts();
+    const defaultAccount = providersAccounts[0];
+    try {
+      const tx = await MyContract.methods
+        .ajouterActe(
+          acteData.officierValidant,
+          acteData.lieuMariage,
+          acteData.dateMariage,
+          acteData.epouse,
+          acteData.epoux,
+          acteData.mereEpouse,
+          acteData.pereEpouse,
+          acteData.mereEpoux,
+          acteData.pereEpoux
+        )
+        .send({
+          from: defaultAccount,
+          gas: 400000,
+          gasPrice: 10000000000,
+        });
+
+      console.log("Transaction Hash: " + tx.transactionHash);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
     loadOfficiers();
     loadLieux();

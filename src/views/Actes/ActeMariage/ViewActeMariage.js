@@ -14,9 +14,21 @@ import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
 
 const ViewActeMariage = () => {
-  const [acteMariage, setActeMariage] = useState([]);
+  const { default: Web3 } = require("web3");
+  const [acteMariage, setActeMariage] = useState({
+    id: "",
+    epoux: "",
+    epouse: "",
+    dateMariage: "",
+    lieuMariage: "",
+    mereEpoux: "",
+    pereEpoux: "",
+    mereEpouse: "",
+    pereEpouse: "",
+  });
   const loadActe = () => {
-    fetch(`http://localhost:8080/api/actes/mariage/transactions/id/${6}`)
+    interactWithBlockchain();
+    /*fetch(`http://localhost:8080/api/actes/mariage/transactions/id/${6}`)
       .then((response) => response.json())
       .then((data) => {
         setActeMariage(data);
@@ -24,7 +36,233 @@ const ViewActeMariage = () => {
       })
       .catch((error) => {
         console.error(error);
+      });*/
+  };
+  const interactWithBlockchain = async () => {
+    const web3 = new Web3(
+      new Web3.providers.HttpProvider("http://localhost:7545")
+    );
+
+    const abi = [
+      {
+        constant: true,
+        inputs: [
+          {
+            name: "",
+            type: "uint256",
+          },
+        ],
+        name: "record",
+        outputs: [
+          {
+            name: "id",
+            type: "uint256",
+          },
+          {
+            name: "officierValidant",
+            type: "string",
+          },
+          {
+            name: "lieuMariage",
+            type: "string",
+          },
+          {
+            name: "dateMariage",
+            type: "string",
+          },
+          {
+            name: "epouse",
+            type: "string",
+          },
+          {
+            name: "epoux",
+            type: "string",
+          },
+          {
+            name: "mereEpoux",
+            type: "string",
+          },
+          {
+            name: "pereEpoux",
+            type: "string",
+          },
+          {
+            name: "mereEpouse",
+            type: "string",
+          },
+          {
+            name: "pereEpouse",
+            type: "string",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: "recordCount",
+        outputs: [
+          {
+            name: "",
+            type: "uint256",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: true,
+            name: "id",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            name: "officierValidant",
+            type: "string",
+          },
+          {
+            indexed: false,
+            name: "timestamp",
+            type: "uint256",
+          },
+        ],
+        name: "ActeAjoute",
+        type: "event",
+      },
+      {
+        constant: false,
+        inputs: [
+          {
+            name: "_officierValidant",
+            type: "string",
+          },
+          {
+            name: "_lieuMariage",
+            type: "string",
+          },
+          {
+            name: "_dateMariage",
+            type: "string",
+          },
+          {
+            name: "_epouse",
+            type: "string",
+          },
+          {
+            name: "_epoux",
+            type: "string",
+          },
+          {
+            name: "_mereEpoux",
+            type: "string",
+          },
+          {
+            name: "_pereEpoux",
+            type: "string",
+          },
+          {
+            name: "_mereEpouse",
+            type: "string",
+          },
+          {
+            name: "_pereEpouse",
+            type: "string",
+          },
+        ],
+        name: "ajouterActe",
+        outputs: [],
+        payable: false,
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        constant: true,
+        inputs: [
+          {
+            name: "_id",
+            type: "uint256",
+          },
+        ],
+        name: "getActe",
+        outputs: [
+          {
+            components: [
+              {
+                name: "id",
+                type: "uint256",
+              },
+              {
+                name: "officierValidant",
+                type: "string",
+              },
+              {
+                name: "lieuMariage",
+                type: "string",
+              },
+              {
+                name: "dateMariage",
+                type: "string",
+              },
+              {
+                name: "epouse",
+                type: "string",
+              },
+              {
+                name: "epoux",
+                type: "string",
+              },
+              {
+                name: "mereEpoux",
+                type: "string",
+              },
+              {
+                name: "pereEpoux",
+                type: "string",
+              },
+              {
+                name: "mereEpouse",
+                type: "string",
+              },
+              {
+                name: "pereEpouse",
+                type: "string",
+              },
+            ],
+            name: "",
+            type: "tuple",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+    ];
+    const contractAddress = "0x9546a8f4738b33DBD9EFf9fBDe32c6D721C76552";
+    const MyContract = new web3.eth.Contract(abi, contractAddress);
+
+    try {
+      const acteId = 2;
+      const acteData = await MyContract.methods.getActe(acteId).call();
+      setActeMariage({
+        id: acteId,
+        epoux: acteData.epoux,
+        epouse: acteData.epouse,
+        dateMariage: acteData.dateMariage,
+        lieuMariage: acteData.lieuMariage,
+        mereEpouse: acteData.mereEpouse,
+        pereEpouse: acteData.pereEpouse,
+        mereEpoux: acteData.mereEpoux,
+        pereEpoux: acteData.pereEpoux,
       });
+    } catch (error) {
+      console.error(error);
+    }
   };
   useEffect(() => {
     loadActe();

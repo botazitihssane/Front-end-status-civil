@@ -232,9 +232,6 @@ const ViewActeNaissance = () => {
     const contractAddress = "0x9546a8f4738b33DBD9EFf9fBDe32c6D721C76552";
     const MyContract = new web3.eth.Contract(abi, contractAddress);
 
-    const providersAccounts = await web3.eth.getAccounts();
-    const defaultAccount = providersAccounts[0];
-
     try {
       const acteId = 2;
       const acteData = await MyContract.methods.getActe(acteId).call();

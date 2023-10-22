@@ -12,6 +12,7 @@ import {
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
+const { default: Web3 } = require("web3");
 const ActeDeces = () => {
   const [acteDeces, setActeDeces] = useState({
     typeEnregistrement: "acteDeces",
@@ -36,9 +37,9 @@ const ActeDeces = () => {
     lieuNaissance: "",
   });
 
-  const [response, setResponse] = useState({
+  /*  const [response, setResponse] = useState({
     status: false,
-  });
+  });*/
   const [selectedLieu, setSelectedLieu] = useState({
     id: "",
     name: "",
@@ -202,7 +203,8 @@ const ActeDeces = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    let data = JSON.stringify(acteDeces);
+    interactWithBlockChain(acteDeces);
+    /*let data = JSON.stringify(acteDeces);
     console.log(data);
     let head = { "Content-Type": "application/json" };
     fetch("http://localhost:8080/api/actes/deces/transactions", {
@@ -216,7 +218,269 @@ const ActeDeces = () => {
       })
       .catch((error) => {
         console.error(error);
-      });
+      });*/
+  };
+
+  const interactWithBlockChain = async (acteData) => {
+    const web3 = new Web3(
+      new Web3.providers.HttpProvider("http://localhost:7545")
+    );
+    const abi = [
+      {
+        constant: true,
+        inputs: [
+          {
+            name: "",
+            type: "uint256",
+          },
+        ],
+        name: "record",
+        outputs: [
+          {
+            name: "id",
+            type: "uint256",
+          },
+          {
+            name: "officierValidant",
+            type: "string",
+          },
+          {
+            name: "nom",
+            type: "string",
+          },
+          {
+            name: "prenom",
+            type: "string",
+          },
+          {
+            name: "dateDeces",
+            type: "string",
+          },
+          {
+            name: "lieuDeces",
+            type: "string",
+          },
+          {
+            name: "dateNaissance",
+            type: "string",
+          },
+          {
+            name: "lieuNaissance",
+            type: "string",
+          },
+          {
+            name: "pere",
+            type: "string",
+          },
+          {
+            name: "mere",
+            type: "string",
+          },
+          {
+            name: "profession",
+            type: "string",
+          },
+          {
+            name: "adresse",
+            type: "string",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: "recordCount",
+        outputs: [
+          {
+            name: "",
+            type: "uint256",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: true,
+            name: "id",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            name: "officierValidant",
+            type: "string",
+          },
+          {
+            indexed: false,
+            name: "timestamp",
+            type: "uint256",
+          },
+        ],
+        name: "ActeAjoute",
+        type: "event",
+      },
+      {
+        constant: false,
+        inputs: [
+          {
+            name: "_officierValidant",
+            type: "string",
+          },
+          {
+            name: "_nom",
+            type: "string",
+          },
+          {
+            name: "_prenom",
+            type: "string",
+          },
+          {
+            name: "_dateDeces",
+            type: "string",
+          },
+          {
+            name: "_lieuDeces",
+            type: "string",
+          },
+          {
+            name: "_dateNaissance",
+            type: "string",
+          },
+          {
+            name: "_lieuNaissance",
+            type: "string",
+          },
+          {
+            name: "_pere",
+            type: "string",
+          },
+          {
+            name: "_mere",
+            type: "string",
+          },
+          {
+            name: "_profession",
+            type: "string",
+          },
+          {
+            name: "_adresse",
+            type: "string",
+          },
+        ],
+        name: "ajouterActe",
+        outputs: [],
+        payable: false,
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        constant: true,
+        inputs: [
+          {
+            name: "_id",
+            type: "uint256",
+          },
+        ],
+        name: "getActe",
+        outputs: [
+          {
+            components: [
+              {
+                name: "id",
+                type: "uint256",
+              },
+              {
+                name: "officierValidant",
+                type: "string",
+              },
+              {
+                name: "nom",
+                type: "string",
+              },
+              {
+                name: "prenom",
+                type: "string",
+              },
+              {
+                name: "dateDeces",
+                type: "string",
+              },
+              {
+                name: "lieuDeces",
+                type: "string",
+              },
+              {
+                name: "dateNaissance",
+                type: "string",
+              },
+              {
+                name: "lieuNaissance",
+                type: "string",
+              },
+              {
+                name: "pere",
+                type: "string",
+              },
+              {
+                name: "mere",
+                type: "string",
+              },
+              {
+                name: "profession",
+                type: "string",
+              },
+              {
+                name: "adresse",
+                type: "string",
+              },
+            ],
+            name: "",
+            type: "tuple",
+          },
+        ],
+        payable: false,
+        stateMutability: "view",
+        type: "function",
+      },
+    ];
+    const contractAddress = "0x113EBCa41e9727860F2034ccC6256B1A359D0F81";
+
+    const MyContract = new web3.eth.Contract(abi, contractAddress);
+
+    const providersAccounts = await web3.eth.getAccounts();
+    const defaultAccount = providersAccounts[0];
+
+    try {
+      const tx = await MyContract.methods
+        .ajouterActe(
+          acteData.officierValidant,
+          acteData.nom,
+          acteData.prenom,
+          acteData.dateDeces,
+          acteData.lieuDeces,
+          acteData.mere,
+          acteData.pere,
+          acteData.profession,
+          acteData.adresse,
+          acteData.dateNaissance,
+          acteData.lieuNaissance
+        )
+        .send({
+          from: defaultAccount,
+          gas: 400000,
+          gasPrice: 10000000000,
+        });
+
+      console.log("Transaction Hash : " + tx.transactionHash);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
