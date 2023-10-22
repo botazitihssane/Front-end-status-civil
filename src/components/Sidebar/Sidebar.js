@@ -177,43 +177,35 @@ const Sidebar = (props) => {
           {/* Divider */}
           <hr className="my-3" />
           {/* Heading */}
-          <h6 className="navbar-heading text-muted">Acte</h6>
+          <h6 className="navbar-heading text-muted">Ajout d'acte</h6>
           {/* Navigation */}
           <Nav className="mb-md-3" navbar>
             <NavItem>
               <NavLink href={"/admin/acteNaissance"}>
                 <i className="ni ni-spaceship" />
-                Acte Naissance
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href={"/admin/acteMariage"}>
-                <i className="ni ni-palette" />
-                Acte Mariage
+                Acte de naissance
               </NavLink>
             </NavItem>
             <NavItem>
               <NavLink href={"/admin/acteDeces"}>
                 <i className="ni ni-ui-04" />
-                Acte Deces
+                Acte de deces
               </NavLink>
             </NavItem>
+          </Nav>
+          <hr className="my-3" />
+          <h6 className="navbar-heading text-muted">Recherche d'acte</h6>
+          <Nav className="mb-md-3" navbar>
             <NavItem>
               <NavLink href={"/admin/ListeActeDeces"}>
                 <i className="ni ni-ui-04" />
-                Liste Acte Deces
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href={"/admin/ListeActeMariage"}>
-                <i className="ni ni-ui-04" />
-                Liste Acte Mariage
+                Acte de deces
               </NavLink>
             </NavItem>
             <NavItem>
               <NavLink href={"/admin/ListeActeNaissance"}>
                 <i className="ni ni-ui-04" />
-                Liste Acte Naissance
+                Acte de naissance
               </NavLink>
             </NavItem>
           </Nav>

@@ -22,6 +22,7 @@ import Register from "views/Login/Register";
 import ViewActeNaissance from "views/Actes/ActeNaissance/ViewActeNaissance";
 import ViewActeMariage from "views/Actes/ActeMariage/ViewActeMariage";
 import ViewActeDeces from "views/Actes/ActeDeces/ViewActeDeces";
+import RechercheActe from "views/Actes/RechercheActe";
 var routes = [
   {
     path: "/index",

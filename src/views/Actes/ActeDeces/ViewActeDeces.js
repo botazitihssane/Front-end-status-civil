@@ -8,6 +8,7 @@ import {
   Row,
   Col,
   Button,
+  Input,
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
@@ -26,7 +27,9 @@ const ViewActeDeces = () => {
     dateNaissance: "",
     lieuNaissance: "",
   });
-
+  const [searchInput, setSearchInput] = useState("");
+  const [searched, setSearched] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const interactWithBlockchain = async () => {
     const web3 = new Web3(
       new Web3.providers.HttpProvider("http://localhost:7545")
@@ -260,28 +263,33 @@ const ViewActeDeces = () => {
     const MyContract = new web3.eth.Contract(abi, contractAddress);
 
     try {
-      const acteId = 1;
+      const acteId = parseInt(searchInput);
       const acteData = await MyContract.methods.getActe(acteId).call();
-      setActeDeces({
-        id: acteId,
-        nom: acteData.nom,
-        prenom: acteData.prenom,
-        dateDeces: acteData.dateDeces,
-        lieuDeces: acteData.lieuDeces,
-        mere: acteData.mere,
-        pere: acteData.pere,
-        profession: acteData.profession,
-        adresse: acteData.adresse,
-        dateNaissance: acteData.dateNaissance,
-        lieuNaissance: acteData.lieuNaissance,
-      });
+      if (acteData.id === 0) {
+        setNotFound(true);
+      } else {
+        setActeDeces({
+          id: acteId,
+          nom: acteData.nom,
+          prenom: acteData.prenom,
+          dateDeces: acteData.dateDeces,
+          lieuDeces: acteData.lieuDeces,
+          mere: acteData.mere,
+          pere: acteData.pere,
+          profession: acteData.profession,
+          adresse: acteData.adresse,
+          dateNaissance: acteData.dateNaissance,
+          lieuNaissance: acteData.lieuNaissance,
+        });
+      }
+      setSearched(true);
     } catch (error) {
       console.error(error);
     }
   };
-  const loadActe = () => {
+  /* const loadActe = () => {
     interactWithBlockchain();
-    /* fetch(`http://localhost:8080/api/actes/deces/transactions/id/${2}`)
+     fetch(`http://localhost:8080/api/actes/deces/transactions/id/${2}`)
       .then((response) => response.json())
       .then((data) => {
         setActeDeces(data);
@@ -289,11 +297,17 @@ const ViewActeDeces = () => {
       })
       .catch((error) => {
         console.error(error);
-      });*/
+      });
+  };*/
+  const handleSearch = () => {
+    interactWithBlockchain();
   };
+
   useEffect(() => {
-    loadActe();
-  }, []);
+    if (searched) {
+      interactWithBlockchain();
+    }
+  }, [searched]);
   return (
     <>
       <UserHeader />
@@ -304,145 +318,171 @@ const ViewActeDeces = () => {
             <Card className="bg-secondary shadow">
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
-                  <Col xs="8">
-                    <h3 className="mb-0">Acte de deces nº {acteDeces.id}</h3>
+                  <Col xs="8"></Col>
+                  <Col className="text-right">
+                    <form>
+                      <div className="navbar-search navbar-search-light form-inline d-md-flex ml-lg-auto">
+                        <Input
+                          type="text"
+                          value={searchInput}
+                          onChange={(e) => setSearchInput(e.target.value)}
+                          placeholder="Entrer le numéro d'acte"
+                          className="mr-2"
+                        />
+                        <Button onClick={handleSearch} color="primary">
+                          Rechercher
+                        </Button>
+                      </div>
+                    </form>
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
-                <Form>
-                  <h6 className="heading-small text-muted mb-4">
-                    Informations d'acte de deces
-                  </h6>
-                  <div className="pl-lg-4">
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">
-                            Acte nº :
-                          </label>
-                          <span className="form-control-label">
-                            {acteDeces.id}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">
-                            Prenom :{" "}
-                          </label>
-                          <span className="form-control-label">
-                            {acteDeces.prenom}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">Nom : </label>
-                          <span className="form-control-label">
-                            {acteDeces.nom}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">
-                            Décédé(e) le :
-                          </label>
-                          <span className="form-control-label">
-                            {acteDeces.dateDeces}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">à : </label>
-                          <span className="form-control-label">
-                            {acteDeces.lieuDeces}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">
-                            Habitant :{" "}
-                          </label>
-                          <span className="form-control-label">
-                            {acteDeces.adresse}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">
-                            Profession :
-                          </label>
-                          <span className="form-control-label">
-                            {acteDeces.profession}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">
-                            Né(e) le :
-                          </label>
-                          <span className="form-control-label">
-                            {acteDeces.dateNaissance}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">à : </label>
-                          <span className="form-control-label">
-                            {acteDeces.lieuNaissance}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">
-                            Fils de :
-                          </label>
-                          <span className="form-control-label">
-                            {acteDeces.pere}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">Et de : </label>
-                          <span className="form-control-label">
-                            {acteDeces.mere}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  </div>
-                  <Row>
-                    <Col lg="4">
-                      <div className="text-left" xs="4"></div>
-                    </Col>
-                    <Col>
-                      <div className="text-right" xs="4">
-                        <Button type="submit" color="primary">
-                          Imprimer l'acte
-                        </Button>
+                {searched && !notFound ? (
+                  <div>
+                    <Form>
+                      <h6 className="heading-small text-muted mb-4">
+                        Informations d'acte de deces
+                      </h6>
+                      <div className="pl-lg-4">
+                        <Row>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Acte nº :
+                              </label>
+                              <span className="form-control-label">
+                                {acteDeces.id}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Prenom :{" "}
+                              </label>
+                              <span className="form-control-label">
+                                {acteDeces.prenom}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Nom :{" "}
+                              </label>
+                              <span className="form-control-label">
+                                {acteDeces.nom}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Décédé(e) le :
+                              </label>
+                              <span className="form-control-label">
+                                {acteDeces.dateDeces}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">à : </label>
+                              <span className="form-control-label">
+                                {acteDeces.lieuDeces}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Habitant :{" "}
+                              </label>
+                              <span className="form-control-label">
+                                {acteDeces.adresse}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Profession :
+                              </label>
+                              <span className="form-control-label">
+                                {acteDeces.profession}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Né(e) le :
+                              </label>
+                              <span className="form-control-label">
+                                {acteDeces.dateNaissance}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">à : </label>
+                              <span className="form-control-label">
+                                {acteDeces.lieuNaissance}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Fils de :
+                              </label>
+                              <span className="form-control-label">
+                                {acteDeces.pere}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Et de :{" "}
+                              </label>
+                              <span className="form-control-label">
+                                {acteDeces.mere}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                        </Row>
                       </div>
-                    </Col>
-                  </Row>
-                </Form>
+                      <Row>
+                        <Col lg="4">
+                          <div className="text-left" xs="4"></div>
+                        </Col>
+                        <Col>
+                          <div className="text-right" xs="4">
+                            <Button type="submit" color="primary">
+                              Imprimer l'acte
+                            </Button>
+                          </div>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    Aucun acte ne correspond au numéro fourni
+                  </div>
+                )}
               </CardBody>
             </Card>
           </Col>

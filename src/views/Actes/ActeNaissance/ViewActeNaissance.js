@@ -8,6 +8,10 @@ import {
   Row,
   Col,
   Button,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Input,
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
@@ -24,6 +28,11 @@ const ViewActeNaissance = () => {
     pere: "",
     mere: "",
   });
+
+  const [searchInput, setSearchInput] = useState("");
+  const [searched, setSearched] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+
   const interactWithBlockchain = async () => {
     const web3 = new Web3(
       new Web3.providers.HttpProvider("http://localhost:7545")
@@ -233,26 +242,30 @@ const ViewActeNaissance = () => {
     const MyContract = new web3.eth.Contract(abi, contractAddress);
 
     try {
-      const acteId = 2;
+      const acteId = parseInt(searchInput);
       const acteData = await MyContract.methods.getActe(acteId).call();
-      setActeNaissance({
-        id: acteId,
-        nom: acteData.nom,
-        prenom: acteData.prenom,
-        dateNaissance: acteData.dateNaissance,
-        lieuNaissance: acteData.lieuNaissance,
-        sexe: acteData.sexe,
-        nationalite: acteData.nationalite,
-        pere: acteData.pere,
-        mere: acteData.mere,
-      });
+      if (acteData.id === 0) {
+        setNotFound(true);
+      } else {
+        setActeNaissance({
+          id: acteId,
+          nom: acteData.nom,
+          prenom: acteData.prenom,
+          dateNaissance: acteData.dateNaissance,
+          lieuNaissance: acteData.lieuNaissance,
+          sexe: acteData.sexe,
+          nationalite: acteData.nationalite,
+          pere: acteData.pere,
+          mere: acteData.mere,
+        });
+      }
+      setSearched(true);
     } catch (error) {
       console.error(error);
     }
   };
-  const loadActe = () => {
-    interactWithBlockchain();
-    /*  fetch(`http://localhost:8080/api/actes/naissance/transactions/id/${6}`)
+  /*const loadActe = () => {
+      fetch(`http://localhost:8080/api/actes/naissance/transactions/id/${6}`)
       .then((response) => response.json())
       .then((data) => {
         setActeNaissance(data);
@@ -260,140 +273,173 @@ const ViewActeNaissance = () => {
       })
       .catch((error) => {
         console.error(error);
-      });*/
+      });
+  };*/
+
+  const handleSearch = () => {
+    interactWithBlockchain();
   };
+
   useEffect(() => {
-    loadActe();
-  }, []);
+    if (searched) {
+      interactWithBlockchain();
+    }
+  }, [searched]);
+
   return (
     <>
       <UserHeader />
-      {/* Page content */}
       <Container className="mt--7" fluid>
         <Row>
           <Col className="order-xl-1" xl="12">
             <Card className="bg-secondary shadow">
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
-                  <Col xs="8">
-                    <h3 className="mb-0">
-                      Acte de naissance nº {acteNaissance.id}{" "}
-                    </h3>
+                  <Col xs="8"></Col>
+                  <Col className="text-right">
+                    <form>
+                      <div className="navbar-search navbar-search-light form-inline d-md-flex ml-lg-auto">
+                        <Input
+                          type="text"
+                          value={searchInput}
+                          onChange={(e) => setSearchInput(e.target.value)}
+                          placeholder="Entrer le numéro d'acte"
+                          className="mr-2"
+                        />
+                        <Button onClick={handleSearch} color="primary">
+                          Rechercher
+                        </Button>
+                      </div>
+                    </form>
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
-                <Form>
-                  <h6 className="heading-small text-muted mb-4">
-                    Informations d'acte de naissance
-                  </h6>
-                  <div className="pl-lg-4">
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">
-                            Acte nº :
-                          </label>
-                          <span className="form-control-label">
-                            {acteNaissance.id}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">
-                            Prenom :{" "}
-                          </label>
-                          <span className="form-control-label">
-                            {acteNaissance.prenom}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">Nom : </label>
-                          <span className="form-control-label">
-                            {acteNaissance.nom}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">
-                            Né(e) le :
-                          </label>
-                          <span className="form-control-label">
-                            {acteNaissance.dateNaissance}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">à : </label>
-                          <span className="form-control-label">
-                            {acteNaissance.lieuNaissance}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">Sexe : </label>
-                          <span className="form-control-label">
-                            {acteNaissance.sexe}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">
-                            Nationalite :
-                          </label>
-                          <span className="form-control-label">
-                            {acteNaissance.nationalite}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">
-                            Fils de :
-                          </label>
-                          <span className="form-control-label">
-                            {acteNaissance.pere}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label className="form-control-label">Et de : </label>
-                          <span className="form-control-label">
-                            {acteNaissance.mere}
-                          </span>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  </div>
-                  <Row>
-                    <Col lg="4">
-                      <div className="text-left" xs="4"></div>
-                    </Col>
-                    <Col>
-                      <div className="text-right" xs="4">
-                        <Button type="submit" color="primary">
-                          Imprimer l'acte
-                        </Button>
+                {searched && !notFound ? (
+                  <div>
+                    <Form>
+                      <h6 className="heading-small text-muted mb-4">
+                        Informations d'acte de naissance
+                      </h6>
+                      <div className="pl-lg-4">
+                        <Row>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Acte nº :
+                              </label>
+                              <span className="form-control-label">
+                                {acteNaissance.id}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Prenom :{" "}
+                              </label>
+                              <span className="form-control-label">
+                                {acteNaissance.prenom}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Nom :{" "}
+                              </label>
+                              <span className="form-control-label">
+                                {acteNaissance.nom}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Né(e) le :
+                              </label>
+                              <span className="form-control-label">
+                                {acteNaissance.dateNaissance}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">à : </label>
+                              <span className="form-control-label">
+                                {acteNaissance.lieuNaissance}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Sexe :{" "}
+                              </label>
+                              <span className="form-control-label">
+                                {acteNaissance.sexe}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Nationalite :
+                              </label>
+                              <span className="form-control-label">
+                                {acteNaissance.nationalite}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Fils de :
+                              </label>
+                              <span className="form-control-label">
+                                {acteNaissance.pere}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                          <Col lg="6">
+                            <FormGroup>
+                              <label className="form-control-label">
+                                Et de :{" "}
+                              </label>
+                              <span className="form-control-label">
+                                {acteNaissance.mere}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                        </Row>
                       </div>
-                    </Col>
-                  </Row>
-                </Form>
+                      <Row>
+                        <Col lg="4">
+                          <div className="text-left" xs="4"></div>
+                        </Col>
+                        <Col>
+                          <div className="text-right" xs="4">
+                            <Button type="submit" color="primary">
+                              Imprimer l'acte
+                            </Button>
+                          </div>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    Aucun acte ne correspond au numéro fourni
+                  </div>
+                )}
               </CardBody>
             </Card>
           </Col>
