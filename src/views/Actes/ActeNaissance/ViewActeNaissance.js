@@ -15,6 +15,7 @@ import {
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
+import PDF from "./PrintActeNaissance";
 const { default: Web3 } = require("web3");
 const ViewActeNaissance = () => {
   const [acteNaissance, setActeNaissance] = useState({
@@ -275,7 +276,11 @@ const ViewActeNaissance = () => {
         console.error(error);
       });
   };*/
+  const [showPDF, setShowPDF] = useState(false);
 
+  const handlePrintActe = () => {
+    setShowPDF(true);
+  };
   const handleSearch = () => {
     interactWithBlockchain();
   };
@@ -427,9 +432,14 @@ const ViewActeNaissance = () => {
                         </Col>
                         <Col>
                           <div className="text-right" xs="4">
-                            <Button type="submit" color="primary">
+                            <Button
+                              type="button"
+                              color="primary"
+                              onClick={handlePrintActe}
+                            >
                               Imprimer l'acte
                             </Button>
+                            {showPDF && <PDF acteNaissance={acteNaissance} />}
                           </div>
                         </Col>
                       </Row>

@@ -12,6 +12,8 @@ import {
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
+import PDF from "./PrintActeDeces";
+
 const { default: Web3 } = require("web3");
 const ViewActeDeces = () => {
   const [acteDeces, setActeDeces] = useState({
@@ -302,7 +304,11 @@ const ViewActeDeces = () => {
   const handleSearch = () => {
     interactWithBlockchain();
   };
+  const [showPDF, setShowPDF] = useState(false);
 
+  const handlePrintActe = () => {
+    setShowPDF(true);
+  };
   useEffect(() => {
     if (searched) {
       interactWithBlockchain();
@@ -470,9 +476,14 @@ const ViewActeDeces = () => {
                         </Col>
                         <Col>
                           <div className="text-right" xs="4">
-                            <Button type="submit" color="primary">
+                            <Button
+                              type="button"
+                              color="primary"
+                              onClick={handlePrintActe}
+                            >
                               Imprimer l'acte
                             </Button>
+                            {showPDF && <PDF acteDeces={acteDeces} />}
                           </div>
                         </Col>
                       </Row>
