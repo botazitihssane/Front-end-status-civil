@@ -16,6 +16,33 @@ import PDF from "./PrintActeDeces";
 
 const { default: Web3 } = require("web3");
 const ViewActeDeces = () => {
+  const [annexeData, setAnnexeData] = useState(null);
+  const getUserInfo = () => {
+    const userData = localStorage.getItem("user");
+    console.log(userData);
+    if (userData) {
+      const user = JSON.parse(userData);
+      const userRole = user.roles[0];
+      if (userRole === "ROLE_AGENT") {
+        console.log("Fetching agent annexe...");
+        fetch(`http://localhost:8080/api/agent/annexe/${user.id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setAnnexeData(data);
+          });
+      } else if (userRole === "ROLE_OFFICIER") {
+        fetch(`http://localhost:8080/api/officier/annexe/${user.id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setAnnexeData(data);
+          });
+      }
+    } else {
+      console.log("User data not found in localStorage");
+    }
+    console.log(acteDeces);
+  };
+
   const [acteDeces, setActeDeces] = useState({
     id: "",
     nom: "",
@@ -28,6 +55,7 @@ const ViewActeDeces = () => {
     adresse: "",
     dateNaissance: "",
     lieuNaissance: "",
+    annexe: {},
   });
   const [searchInput, setSearchInput] = useState("");
   const [searched, setSearched] = useState(false);
@@ -270,19 +298,22 @@ const ViewActeDeces = () => {
       if (acteData.id === 0) {
         setNotFound(true);
       } else {
-        setActeDeces({
-          id: acteId,
-          nom: acteData.nom,
-          prenom: acteData.prenom,
-          dateDeces: acteData.dateDeces,
-          lieuDeces: acteData.lieuDeces,
-          mere: acteData.mere,
-          pere: acteData.pere,
-          profession: acteData.profession,
-          adresse: acteData.adresse,
-          dateNaissance: acteData.dateNaissance,
-          lieuNaissance: acteData.lieuNaissance,
-        });
+        if (annexeData) {
+          setActeDeces({
+            id: acteId,
+            nom: acteData.nom,
+            prenom: acteData.prenom,
+            dateDeces: acteData.dateDeces,
+            lieuDeces: acteData.lieuDeces,
+            mere: acteData.mere,
+            pere: acteData.pere,
+            profession: acteData.profession,
+            adresse: acteData.adresse,
+            dateNaissance: acteData.dateNaissance,
+            lieuNaissance: acteData.lieuNaissance,
+            annexe: annexeData,
+          });
+        }
       }
       setSearched(true);
     } catch (error) {
@@ -310,6 +341,7 @@ const ViewActeDeces = () => {
     setShowPDF(true);
   };
   useEffect(() => {
+    getUserInfo();
     if (searched) {
       interactWithBlockchain();
     }

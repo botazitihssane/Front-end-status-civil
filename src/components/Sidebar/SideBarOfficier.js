@@ -179,6 +179,16 @@ const SidebarOfficier = (props) => {
               </NavLink>
             </NavItem>
           </Nav>
+          <hr className="my-3" />
+          <h6 className="navbar-heading text-muted">Validation d'acte</h6>
+          <Nav className="mb-md-3" navbar>
+            <NavItem>
+              <NavLink href={"/agent/validationActe"}>
+                <i className="ni ni-ui-04" />
+                Acte à valider
+              </NavLink>
+            </NavItem>
+          </Nav>
         </Collapse>
       </Container>
     </Navbar>

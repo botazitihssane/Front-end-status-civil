@@ -12,14 +12,39 @@ import {
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect, useState } from "react";
+
 const { default: Web3 } = require("web3");
 const ActeDeces = () => {
+  const [annexe, setAnnexe] = useState();
+  const getUserInfo = () => {
+    const userData = localStorage.getItem("user");
+    console.log(userData);
+    if (userData) {
+      const user = JSON.parse(userData);
+      const userRole = user.roles[0];
+      if (userRole === "ROLE_AGENT") {
+        console.log("Fetching agent annexe...");
+        fetch(`http://localhost:8080/api/agent/annexe/${user.id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setAnnexe(data);
+            console.log(data);
+          });
+      } else if (userRole === "ROLE_OFFICIER") {
+        fetch(`http://localhost:8080/api/officier/annexe/${user.id}`)
+          .then((response) => response.json())
+          .then((data) => setAnnexe(data));
+      }
+    } else {
+      console.log("User data not found in localStorage");
+    }
+    console.log(annexe);
+  };
   const [acteDeces, setActeDeces] = useState({
     typeEnregistrement: "acteDeces",
-    dateEnregistrement: "",
-    lieuEnregistrement: "",
+    dateEnregistrement: new Date().toISOString().slice(0, 10),
+    lieuEnregistrement: annexe,
     registre: "",
-    officierValidant: "",
     nom: "",
     prenom: "",
     causeDeces: "",
@@ -36,19 +61,6 @@ const ActeDeces = () => {
     dateNaissance: "",
     lieuNaissance: "",
   });
-
-  /*  const [response, setResponse] = useState({
-    status: false,
-  });*/
-  const [selectedLieu, setSelectedLieu] = useState({
-    id: "",
-    name: "",
-  });
-  const [lieux, setLieux] = useState([]);
-  const [registres, setRegistres] = useState([]);
-  const [selectedRegistre, setSelectedRegistre] = useState("");
-  const [officiers, setOfficiers] = useState([]);
-  const [selectedOfficier, setSelectedOfficier] = useState("");
   const [personnes, setPersonnes] = useState({
     defunt: {
       cin: "",
@@ -65,16 +77,6 @@ const ActeDeces = () => {
     setActeDeces({ ...acteDeces, [e.target.name]: e.target.value });
   };
 
-  const onRegistreInputChange = (e) => {
-    setSelectedRegistre(e.target.value);
-    setActeDeces({ ...acteDeces, registre: e.target.value });
-  };
-
-  const onOfficierInputChange = (e) => {
-    setSelectedOfficier(e.target.value);
-    setActeDeces({ ...acteDeces, officierValidant: e.target.value });
-  };
-
   const onPersonneInputChange = (e) => {
     if (e.target.name === "defunt") {
       setPersonnes({ ...personnes, defunt: { cin: e.target.value } });
@@ -83,44 +85,6 @@ const ActeDeces = () => {
     } else if (e.target.name === "conjoint") {
       setPersonnes({ ...personnes, conjoint: { cin: e.target.value } });
     }
-  };
-
-  const onLieuInputChange = (e) => {
-    const selectedLieuId = e.target.value;
-    const selectedLieuName = e.target.options[e.target.selectedIndex].text;
-    setSelectedLieu({ id: selectedLieuId, name: selectedLieuName });
-    setActeDeces({
-      ...acteDeces,
-      lieuEnregistrement: selectedLieuName,
-    });
-    loadRegistres(selectedLieuId);
-    console.log(selectedLieuName);
-  };
-
-  const loadLieux = () => {
-    fetch("http://localhost:8080/api/annexes")
-      .then((response) => response.json())
-      .then((data) => setLieux(data));
-  };
-
-  const loadRegistres = (annexe) => {
-    fetch(`http://localhost:8080/api/registre/annexe/${annexe}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => setRegistres(data))
-      .catch((error) => {
-        console.error("Fetch error:", error);
-      });
-  };
-
-  const loadOfficiers = () => {
-    fetch("http://localhost:8080/api/officiers")
-      .then((response) => response.json())
-      .then((data) => setOfficiers(data));
   };
 
   const submitSearch = async (e) => {
@@ -482,12 +446,9 @@ const ActeDeces = () => {
       console.error(error);
     }
   };
-
   useEffect(() => {
-    loadLieux();
-    loadOfficiers();
+    getUserInfo();
   }, []);
-
   return (
     <>
       <UserHeader />
@@ -508,123 +469,6 @@ const ActeDeces = () => {
                     Informations de l'acte de deces
                   </h6>
                   <div className="pl-lg-4">
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-dateEnregistrement"
-                          >
-                            Date d'enregistrement
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-nom-dateEnregistrement"
-                            placeholder="Date d'enregistrement"
-                            type="date"
-                            name="dateEnregistrement"
-                            onChange={(e) => onInputChange(e)}
-                            value={acteDeces.dateEnregistrement}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-lieuEnregistrement"
-                          >
-                            Lieu d'enregistrement
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-nom-lieuEnregistrement"
-                            placeholder="Lieu d'enregistrement"
-                            type="select"
-                            name="lieuEnregistrement"
-                            onChange={(e) => onLieuInputChange(e)}
-                            value={selectedLieu.id}
-                          >
-                            <option value="" disabled hidden>
-                              Lieu d'enregistrement
-                            </option>
-                            {lieux.map((lieu) => (
-                              <option key={lieu.id} value={lieu.id}>
-                                {lieu.nomAnnexe}
-                              </option>
-                            ))}
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-registre"
-                          >
-                            Registre Appartenant
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-nom-registre"
-                            placeholder="Registre Appartenant "
-                            type="select"
-                            name="registre"
-                            onChange={(e) => onRegistreInputChange(e)}
-                            value={selectedRegistre.nomRegistre}
-                          >
-                            <option value="">Registre Appartenant</option>
-                            {registres.map((registre) => (
-                              <option
-                                key={registre.id}
-                                value={registre.nomRegistre}
-                              >
-                                {registre.nomRegistre}
-                              </option>
-                            ))}
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-officierValidant"
-                          >
-                            Officier Validant
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-officierValidant"
-                            placeholder="Officier Validant"
-                            name="officierValidant"
-                            type="select"
-                            onChange={(e) => onOfficierInputChange(e)}
-                            value={selectedOfficier.id}
-                          >
-                            <option value="">Officier Validant</option>
-                            {officiers.map((officier) => (
-                              <option
-                                key={officier.id}
-                                value={
-                                  officier.grade +
-                                  " " +
-                                  "" +
-                                  officier.nom +
-                                  " " +
-                                  officier.prenom
-                                }
-                              >
-                                {officier.grade} {officier.nom}{" "}
-                                {officier.prenom}
-                              </option>
-                            ))}
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                    </Row>
                     <Row>
                       <Col lg="6">
                         <FormGroup>
