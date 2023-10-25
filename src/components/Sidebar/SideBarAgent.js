@@ -5,30 +5,17 @@ import { PropTypes } from "prop-types";
 
 // reactstrap components
 import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
   Collapse,
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
   DropdownToggle,
-  FormGroup,
-  Form,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
   Media,
   NavbarBrand,
   Navbar,
   NavItem,
   NavLink,
   Nav,
-  Progress,
-  Table,
   Container,
   Row,
   Col,
@@ -36,7 +23,7 @@ import {
 
 var ps;
 
-const Sidebar = (props) => {
+const SidebarAgent = (props) => {
   const [collapseOpen, setCollapseOpen] = useState();
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
@@ -159,33 +146,34 @@ const Sidebar = (props) => {
           <Nav navbar>{createLinks(routes)}</Nav>
           {/* Divider */}
           <hr className="my-3" />
-          <h6 className="navbar-heading text-muted">Utilisateurs</h6>
+          {/* Heading */}
+          <h6 className="navbar-heading text-muted">Ajout d'acte</h6>
           {/* Navigation */}
           <Nav className="mb-md-3" navbar>
             <NavItem>
-              <NavLink href={"/admin/officiers"}>
+              <NavLink href={"/agent/acteNaissance"}>
                 <i className="ni ni-spaceship" />
-                Officier d'état civil
+                Acte de naissance
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink href={"/admin/agents"}>
+              <NavLink href={"/agent/acteDeces"}>
                 <i className="ni ni-ui-04" />
-                Agent d'entrée de données
+                Acte de deces
               </NavLink>
             </NavItem>
           </Nav>
           <hr className="my-3" />
-          <h6 className="navbar-heading text-muted">Historiques des actes</h6>
+          <h6 className="navbar-heading text-muted">Recherche d'acte</h6>
           <Nav className="mb-md-3" navbar>
             <NavItem>
-              <NavLink href={"/admin/historiqueActeDeces"}>
+              <NavLink href={"/agent/ListeActeDeces"}>
                 <i className="ni ni-ui-04" />
                 Acte de deces
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink href={"/admin/historiqueActeNaissance"}>
+              <NavLink href={"/agent/ListeActeNaissance"}>
                 <i className="ni ni-ui-04" />
                 Acte de naissance
               </NavLink>
@@ -197,11 +185,7 @@ const Sidebar = (props) => {
   );
 };
 
-Sidebar.defaultProps = {
-  routes: [{}],
-};
-
-Sidebar.propTypes = {
+SidebarAgent.propTypes = {
   // links that will be displayed inside the component
   routes: PropTypes.arrayOf(PropTypes.object),
   logo: PropTypes.shape({
@@ -218,4 +202,4 @@ Sidebar.propTypes = {
   }),
 };
 
-export default Sidebar;
+export default SidebarAgent;

@@ -5,11 +5,10 @@ import { Container } from "reactstrap";
 // core components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
-import Sidebar from "components/Sidebar/Sidebar.js";
 
-import routes from "routes/AdminRoutes";
-
-const Admin = (props) => {
+import SidebarAgent from "components/Sidebar/SideBarAgent";
+import routes from "routes/AgentRoutes";
+const Agent = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
 
@@ -21,7 +20,7 @@ const Admin = (props) => {
 
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
+      if (prop.layout === "/agent") {
         return (
           <Route path={prop.path} element={prop.component} key={key} exact />
         );
@@ -47,11 +46,11 @@ const Admin = (props) => {
 
   return (
     <>
-      <Sidebar
+      <SidebarAgent
         {...props}
         routes={filteredRoutes}
         logo={{
-          innerLink: "/admin/index",
+          innerLink: "/agent/index",
           imgSrc: require("../assets/img/brand/morocco.png"),
           imgAlt: "...",
         }}
@@ -63,7 +62,7 @@ const Admin = (props) => {
         />
         <Routes>
           {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/admin/index" replace />} />
+          <Route path="*" element={<Navigate to="/agent/index" replace />} />
         </Routes>
         <Container fluid>
           <AdminFooter />
@@ -73,4 +72,4 @@ const Admin = (props) => {
   );
 };
 
-export default Admin;
+export default Agent;

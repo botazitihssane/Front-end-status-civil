@@ -19,9 +19,6 @@ import EditRegistre from "views/StructureOrganisationnelle/Registre/EditRegistre
 import Viewregistre from "views/StructureOrganisationnelle/Registre/ViewRegistre";
 import Login from "views/Login/Login";
 import Register from "views/Login/Register";
-import ViewActeNaissance from "views/Actes/ActeNaissance/ViewActeNaissance";
-import ViewActeMariage from "views/Actes/ActeMariage/ViewActeMariage";
-import ViewActeDeces from "views/Actes/ActeDeces/ViewActeDeces";
 var routes = [
   {
     path: "/index",
@@ -30,6 +27,7 @@ var routes = [
     component: <Index />,
     layout: "/admin",
   },
+
   {
     path: "/arrondissement",
     name: "Arrondissement",
@@ -150,27 +148,6 @@ var routes = [
     hidden: true,
   },
   {
-    path: "/acteNaissance",
-    name: "Acte Naissance",
-    component: <ActeNaissance />,
-    layout: "/admin",
-    hidden: true,
-  },
-  {
-    path: "/acteMariage",
-    name: "Acte Mariage",
-    component: <ActeMariage />,
-    layout: "/admin",
-    hidden: true,
-  },
-  {
-    path: "/acteDeces",
-    name: "Acte Deces",
-    component: <ActeDeces />,
-    layout: "/admin",
-    hidden: true,
-  },
-  {
     path: "/login",
     name: "Login",
     component: <Login />,
@@ -182,27 +159,6 @@ var routes = [
     name: "Register",
     component: <Register />,
     layout: "/auth",
-    hidden: true,
-  },
-  {
-    path: "/ListeActeNaissance",
-    name: "ViewActeNaissance",
-    component: <ViewActeNaissance />,
-    layout: "/admin",
-    hidden: true,
-  },
-  {
-    path: "/ListeActeMariage",
-    name: "ViewActeMariage",
-    component: <ViewActeMariage />,
-    layout: "/admin",
-    hidden: true,
-  },
-  {
-    path: "/ListeActeDeces",
-    name: "ViewActeDeces",
-    component: <ViewActeDeces />,
-    layout: "/admin",
     hidden: true,
   },
 ];

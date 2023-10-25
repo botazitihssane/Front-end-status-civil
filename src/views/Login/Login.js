@@ -53,11 +53,20 @@ const Login = () => {
           password,
         }
       );
-
+      const user = response.data;
+      console.log(user.roles);
+      if (user.roles[0] === "ROLE_ADMIN") {
+        navigate("/admin/index");
+      } else if (user.roles[0] === "ROLE_AGENT") {
+        navigate("/agent/index");
+      } else if (user.roles[0] === "ROLE_OFFICIER") {
+        navigate("/officier/index");
+      } else if (user.roles[0] === "ROLE_MINISTERE") {
+        navigate("/ministere/index");
+      }
       const token = response.data.token;
       Cookies.set("civilStatus", token, { path: "/api", expires: 1 });
       localStorage.setItem("user", JSON.stringify(response.data));
-      navigate("/admin/index");
     } catch (error) {
       console.error("Login failed. Check your credentials.");
       console.error(error);
