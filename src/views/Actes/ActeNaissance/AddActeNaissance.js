@@ -15,43 +15,50 @@ import { useEffect, useState } from "react";
 const { default: Web3 } = require("web3");
 const ActeNaissance = () => {
   const [annexe, setAnnexe] = useState();
+  const [officier, setOfficier] = useState();
+
   const getUserInfo = () => {
     const userData = localStorage.getItem("user");
-    console.log(userData);
     if (userData) {
       const user = JSON.parse(userData);
-      const userId = user.id;
+      setOfficier(user);
       const userRole = user.roles[0];
-      if (userRole === "ROLE_AGENT") {
-        console.log("Fetching agent annexe...");
-        fetch(`http://localhost:8080/api/agent/annexe/${user.id}`)
+      if (userRole === "ROLE_OFFICIER") {
+        fetch(`http://localhost:8080/api/officier/annexe/${user.id}`)
           .then((response) => response.json())
           .then((data) => {
             setAnnexe(data);
-            console.log(data);
+            if (data.id) {
+              console.log(data);
+              loadRegistres(data.id);
+              // Set the concatenated value in acteNaissance
+              setActeNaissance({
+                ...acteNaissance,
+                officier: { id: officier.id, username: officier.username },
+              });
+            }
           });
-      } else if (userRole === "ROLE_OFFICIER") {
-        fetch(`http://localhost:8080/api/officier/annexe/${user.id}`)
-          .then((response) => response.json())
-          .then((data) => setAnnexe(data));
       }
     } else {
       console.log("User data not found in localStorage");
     }
-    console.log(annexe);
   };
 
-  const [selectedDeclarant, setSelectedDeclarant] = useState("");
   const [acteNaissance, setActeNaissance] = useState({
     typeEnregistrement: "acteNaissance",
     dateEnregistrement: new Date().toISOString().slice(0, 10),
-    lieuEnregistrement: annexe,
-    registre: "",
+    registre: {
+      id: "",
+    },
     nom: "",
     prenom: "",
+    personne: {
+      id: "",
+    },
+    officier: {
+      id: "",
+    },
     typeNaissance: "",
-    declarant: selectedDeclarant,
-    relationAvecNouveauNe: "",
     pere: "",
     mere: "",
     sexe: "",
@@ -60,11 +67,6 @@ const ActeNaissance = () => {
     lieuNaissance: "",
   });
 
-  const [declarant, setDeclarant] = useState({
-    cin: "",
-    nom: "",
-    prenom: "",
-  });
   const [personne, setPersonne] = useState({
     id: "",
     nom: "",
@@ -275,7 +277,7 @@ const ActeNaissance = () => {
         type: "function",
       },
     ];
-    const contractAddress = "0x9546a8f4738b33DBD9EFf9fBDe32c6D721C76552";
+    const contractAddress = "0xBEBE31CA3b4c9c655759Afe6Aa7f1B64A026f4CF";
     const MyContract = new web3.eth.Contract(abi, contractAddress);
 
     const providersAccounts = await web3.eth.getAccounts();
@@ -283,7 +285,7 @@ const ActeNaissance = () => {
     try {
       const tx = await MyContract.methods
         .ajouterActe(
-          acteData.officierValidant,
+          acteData.officier.username,
           acteData.nom,
           acteData.prenom,
           acteData.sexe,
@@ -308,11 +310,6 @@ const ActeNaissance = () => {
   const onPersonneInputChange = (e) => {
     console.log(e.target.value);
     setPersonne({ ...personne, id: e.target.value });
-  };
-
-  const onDeclarantInputChange = (e) => {
-    console.log(e.target.value);
-    setDeclarant({ ...declarant, cin: e.target.value });
   };
 
   const onInputChange = (e) => {
@@ -359,23 +356,23 @@ const ActeNaissance = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    const dataToSend = { ...acteNaissance };
     interactWithBlockChain(acteNaissance);
-    /* let data = JSON.stringify(acteNaissance);
+    let data = JSON.stringify(dataToSend);
     console.log(data);
     let head = { "Content-Type": "application/json" };
-    fetch("http://localhost:8080/api/actes/naissance/transactions", {
+    fetch("http://localhost:8080/api/enregistrement", {
       method: "POST",
       headers: head,
       body: data,
     })
       .then((response) => response.json())
       .then((data) => {
-        setResponse(response);
         console.log(data);
       })
       .catch((error) => {
         console.error(error);
-      });*/
+      });
   };
 
   const loadPersonne = (id) => {
@@ -390,29 +387,38 @@ const ActeNaissance = () => {
           nationalite: data.nationalite,
           dateNaissance: data.dateNaissance,
           lieuNaissance: data.lieuNaissance,
+          personne: { id: data.id },
         }));
+        console.log(data);
         fetchPere(data.pere.id);
         fetchMere(data.mere.id);
       });
   };
 
-  const fetchDeclarant = (cin) => {
-    fetch(`http://localhost:8080/api/personne/cin/${cin}`)
+  const [registres, setRegistres] = useState([]);
+  const [selectedRegistre, setSelectedRegistre] = useState("");
+
+  const loadRegistres = (annexe) => {
+    fetch(`http://localhost:8080/api/registre/annexe/${annexe}`)
       .then((response) => response.json())
       .then((data) => {
-        const fullName = data.nom + " " + data.prenom;
-        setSelectedDeclarant(fullName);
-        setActeNaissance((prevActeNaissance) => ({
-          ...prevActeNaissance,
-          declarant: fullName,
-        }));
+        setRegistres(data);
       });
   };
-
+  const onRegisteInputChange = (e) => {
+    const selectedRegistreId = e.target.value;
+    setSelectedRegistre(selectedRegistreId);
+    setActeNaissance({
+      ...acteNaissance,
+      registre: {
+        id: selectedRegistreId,
+      },
+    });
+    console.log("selected registre " + selectedRegistreId);
+  };
   const submitSearch = (e) => {
     e.preventDefault();
     loadPersonne(personne.id);
-    fetchDeclarant(declarant.cin);
     return false;
   };
 
@@ -442,7 +448,35 @@ const ActeNaissance = () => {
                   </h6>
                   <div className="pl-lg-4">
                     <Row>
-                      <Col lg="6">
+                      <Col lg="4">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-arrondissement"
+                          >
+                            Registre Appartenant
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            id="input-nom-arrondissement"
+                            placeholder="Arrondissement"
+                            type="select"
+                            name="arrondissement"
+                            onChange={(e) => onRegisteInputChange(e)}
+                            value={selectedRegistre}
+                          >
+                            <option value="" disabled hidden>
+                              Registre
+                            </option>
+                            {registres.map((registre) => (
+                              <option key={registre.id} value={registre.id}>
+                                {registre.nomRegistre}
+                              </option>
+                            ))}
+                          </Input>
+                        </FormGroup>
+                      </Col>
+                      <Col lg="4">
                         <FormGroup>
                           <label
                             className="form-control-label"
@@ -469,7 +503,7 @@ const ActeNaissance = () => {
                           </div>
                         ) : null}
                       </Col>
-                      <Col lg="6">
+                      <Col lg="4">
                         <FormGroup>
                           <label
                             className="form-control-label"
@@ -485,54 +519,6 @@ const ActeNaissance = () => {
                             type="text"
                             onChange={(e) => onInputChange(e)}
                             value={acteNaissance.typeNaissance}
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-declarant"
-                          >
-                            Declarant
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-nom-declarant"
-                            placeholder="Declarant"
-                            type="text"
-                            name="cin"
-                            onChange={(e) => onDeclarantInputChange(e)}
-                            value={declarant.cin}
-                          />
-                        </FormGroup>
-                        {declarant.prenom || declarant.nom ? (
-                          <div>
-                            <label>Declarant: </label>
-                            <span>
-                              {selectedDeclarant.nom} {selectedDeclarant.prenom}
-                            </span>
-                          </div>
-                        ) : null}
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-relationAvecNouveauNe"
-                          >
-                            Relation avec le nouveau né(e)
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-relationAvecNouveauNe"
-                            placeholder="Relation avec le nouveau né(e)"
-                            name="relationAvecNouveauNe"
-                            type="text"
-                            onChange={(e) => onInputChange(e)}
-                            value={acteNaissance.relationAvecNouveauNe}
                           />
                         </FormGroup>
                       </Col>

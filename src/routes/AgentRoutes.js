@@ -49,7 +49,7 @@ var agentRoutes = [
     name: "Liste des citoyens",
     icon: "ni ni-single-02 text-orange",
     component: <ViewCitoyen />,
-    layout: "/admin",
+    layout: "/agent",
     hidden: true,
   },
   {
@@ -57,7 +57,7 @@ var agentRoutes = [
     name: "Modifier un citoyen",
     icon: "ni ni-single-02 text-orange",
     component: <EditCitoyen />,
-    layout: "/admin",
+    layout: "/agent",
     hidden: true,
   },
 ];

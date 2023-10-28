@@ -58,11 +58,19 @@ const PDF = ({ acteNaissance }) => {
             <Text style={[styles.text, styles.smallText]}>
               Ministère de l'Intérieur
             </Text>
-            <Text style={[styles.text, styles.smallText]}>Wilaya Region</Text>
-            <Text style={[styles.text, styles.smallText]}>Préfecture</Text>
-            <Text style={[styles.text, styles.smallText]}>Conseil</Text>
             <Text style={[styles.text, styles.smallText]}>
-              Bureau d'État Civil
+              Wilaya Region{" "}
+              {acteNaissance.annexe.arrondissement.prefecture.region.nomRegion}
+            </Text>
+            <Text style={[styles.text, styles.smallText]}>
+              Préfecture{" "}
+              {acteNaissance.annexe.arrondissement.prefecture.nomPrefecture}
+            </Text>
+            <Text style={[styles.text, styles.smallText]}>
+              Conseil {acteNaissance.annexe.arrondissement.nomArrondissement}
+            </Text>
+            <Text style={[styles.text, styles.smallText]}>
+              Bureau d'État Civil {acteNaissance.annexe.nomAnnexe}
             </Text>
             <Text style={[styles.text, styles.smallText]}>
               Acte n° {acteNaissance.id}

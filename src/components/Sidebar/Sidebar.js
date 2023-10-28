@@ -1,34 +1,21 @@
 import { useState } from "react";
-import { NavLink as NavLinkRRD, Link, useNavigate } from "react-router-dom";
+import { NavLink as NavLinkRRD, Link } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
 
 // reactstrap components
 import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
   Collapse,
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
   DropdownToggle,
-  FormGroup,
-  Form,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
   Media,
   NavbarBrand,
   Navbar,
   NavItem,
   NavLink,
   Nav,
-  Progress,
-  Table,
   Container,
   Row,
   Col,
@@ -165,13 +152,7 @@ const Sidebar = (props) => {
             <NavItem>
               <NavLink href={"/admin/officiers"}>
                 <i className="ni ni-spaceship" />
-                Officier d'état civil
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href={"/admin/agents"}>
-                <i className="ni ni-ui-04" />
-                Agent d'entrée de données
+                Gestion des utilisateurs
               </NavLink>
             </NavItem>
           </Nav>

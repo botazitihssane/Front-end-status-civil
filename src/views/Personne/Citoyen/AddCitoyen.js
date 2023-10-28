@@ -160,7 +160,7 @@ const Citoyen = () => {
                   </Col>
                   <Col className="text-right" xs="4">
                     <Link
-                      to={"/admin/viewCitoyens"}
+                      to={"/agent/viewCitoyens"}
                       className="btn btn-primary"
                     >
                       Liste des citoyens

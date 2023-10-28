@@ -18,6 +18,25 @@ import { useEffect, useState } from "react";
 import PDF from "./PrintActeNaissance";
 const { default: Web3 } = require("web3");
 const ViewActeNaissance = () => {
+  const [annexeData, setAnnexeData] = useState(null);
+  const getUserInfo = () => {
+    const userData = localStorage.getItem("user");
+    console.log(userData);
+    if (userData) {
+      const user = JSON.parse(userData);
+      const userRole = user.roles[0];
+      if (userRole === "ROLE_OFFICIER") {
+        fetch(`http://localhost:8080/api/officier/annexe/${user.id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setAnnexeData(data);
+          });
+      }
+    } else {
+      console.log("User data not found in localStorage");
+    }
+    console.log(acteNaissance);
+  };
   const [acteNaissance, setActeNaissance] = useState({
     id: "",
     nom: "",
@@ -28,6 +47,7 @@ const ViewActeNaissance = () => {
     nationalite: "",
     pere: "",
     mere: "",
+    annexe: {},
   });
 
   const [searchInput, setSearchInput] = useState("");
@@ -248,19 +268,22 @@ const ViewActeNaissance = () => {
       if (acteData.id === 0) {
         setNotFound(true);
       } else {
-        setActeNaissance({
-          id: acteId,
-          nom: acteData.nom,
-          prenom: acteData.prenom,
-          dateNaissance: acteData.dateNaissance,
-          lieuNaissance: acteData.lieuNaissance,
-          sexe: acteData.sexe,
-          nationalite: acteData.nationalite,
-          pere: acteData.pere,
-          mere: acteData.mere,
-        });
+        if (annexeData) {
+          setActeNaissance({
+            id: acteId,
+            nom: acteData.nom,
+            prenom: acteData.prenom,
+            dateNaissance: acteData.dateNaissance,
+            lieuNaissance: acteData.lieuNaissance,
+            sexe: acteData.sexe,
+            nationalite: acteData.nationalite,
+            pere: acteData.pere,
+            mere: acteData.mere,
+            annexe: annexeData,
+          });
+        }
+        setSearched(true);
       }
-      setSearched(true);
     } catch (error) {
       console.error(error);
     }
@@ -286,6 +309,7 @@ const ViewActeNaissance = () => {
   };
 
   useEffect(() => {
+    getUserInfo();
     if (searched) {
       interactWithBlockchain();
     }

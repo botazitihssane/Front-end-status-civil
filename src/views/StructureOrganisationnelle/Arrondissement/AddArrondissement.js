@@ -11,25 +11,42 @@ import {
   Button,
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const Arrondissement = () => {
   const [arrondissement, setArrondissement] = useState({
+    prefecture: {
+      id: "",
+    },
     nomArrondissement: "",
     ville: "",
-    pays: "",
-    codePostal: "",
     population: "",
-    superficie: "",
-    adresseArrondissement: "",
   });
-
+  const [prefectures, setPrefectures] = useState([]);
+  const [selectedPrefecture, setSelectedPrefecture] = useState("");
   const onInputChange = (e) => {
-    setArrondissement({ ...arrondissement, [e.target.name]: e.target.value });
+    if (e.target.name === "prefecture") {
+      setArrondissement({
+        ...arrondissement,
+        prefecture: { id: e.target.value },
+      });
+    } else {
+      setArrondissement({ ...arrondissement, [e.target.name]: e.target.value });
+    }
   };
   const [response, setResponse] = useState({ status: false });
 
+  const onPrefectureInputChange = (e) => {
+    const selectedPrefectureId = e.target.value;
+    setSelectedPrefecture(selectedPrefectureId);
+    setArrondissement({
+      ...arrondissement,
+      prefecture: {
+        id: selectedPrefectureId,
+      },
+    });
+  };
   const onSubmit = async (e) => {
     e.preventDefault();
     let data = JSON.stringify(arrondissement);
@@ -49,6 +66,16 @@ const Arrondissement = () => {
         console.error(error);
       });
   };
+
+  const loadPrefectures = () => {
+    fetch("http://localhost:8080/api/prefectures")
+      .then((response) => response.json())
+      .then((data) => setPrefectures(data));
+  };
+
+  useEffect(() => {
+    loadPrefectures();
+  }, []);
 
   return (
     <>
@@ -86,6 +113,34 @@ const Arrondissement = () => {
                             className="form-control-label"
                             htmlFor="input-nomArrondissement"
                           >
+                            Prefecture Correspondate
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            id="input-nom-arrondissement"
+                            placeholder="Prefecture"
+                            type="select"
+                            name="prefecture"
+                            onChange={(e) => onPrefectureInputChange(e)}
+                            value={selectedPrefecture}
+                          >
+                            <option value="" disabled hidden>
+                              Prefecure
+                            </option>
+                            {prefectures.map((prefecture) => (
+                              <option key={prefecture.id} value={prefecture.id}>
+                                {prefecture.nomPrefecture}
+                              </option>
+                            ))}
+                          </Input>
+                        </FormGroup>
+                      </Col>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-nomArrondissement"
+                          >
                             Nom d'arrondissement
                           </label>
                           <Input
@@ -96,25 +151,6 @@ const Arrondissement = () => {
                             name="nomArrondissement"
                             onChange={(e) => onInputChange(e)}
                             value={arrondissement.nomArrondissement}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-adresse"
-                          >
-                            Adresse
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-Adresse"
-                            placeholder="Adresse de l'arrondissement"
-                            name="adresseArrondissement"
-                            type="text"
-                            onChange={(e) => onInputChange(e)}
-                            value={arrondissement.adresseArrondissement}
                           />
                         </FormGroup>
                       </Col>
@@ -139,46 +175,6 @@ const Arrondissement = () => {
                           />
                         </FormGroup>
                       </Col>
-                      <Col lg="4">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-pays"
-                          >
-                            Pays
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-pays"
-                            placeholder="Pays"
-                            type="text"
-                            name="pays"
-                            onChange={(e) => onInputChange(e)}
-                            value={arrondissement.pays}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="4">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-country"
-                          >
-                            Code Postal
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-code-postal"
-                            placeholder="Code postal"
-                            type="number"
-                            name="codePostal"
-                            onChange={(e) => onInputChange(e)}
-                            value={arrondissement.codePostal}
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
                       <Col lg="6">
                         <FormGroup>
                           <label
@@ -195,25 +191,6 @@ const Arrondissement = () => {
                             name="population"
                             onChange={(e) => onInputChange(e)}
                             value={arrondissement.population}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-superficie"
-                          >
-                            Superficie
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-superficie"
-                            placeholder="Superficie"
-                            type="text"
-                            name="superficie"
-                            onChange={(e) => onInputChange(e)}
-                            value={arrondissement.superficie}
                           />
                         </FormGroup>
                       </Col>

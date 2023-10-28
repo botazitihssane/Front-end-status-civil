@@ -61,20 +61,8 @@ const Login = () => {
 
       if (user.roles[0] === "ROLE_ADMIN") {
         navigate("/admin/index");
-      } else if (user.roles[0] === "ROLE_AGENT") {
-        /* console.log("Fetching agent annexe...");
-        fetch(`http://localhost:8080/api/agent/annexe/${user.id}`)
-          .then((response) => response.json())
-          .then((data) => {
-            setAnnexe(data);
-            console.log(data);
-          });*/
-        navigate("/agent/index");
       } else if (user.roles[0] === "ROLE_OFFICIER") {
-        /* fetch(`http://localhost:8080/api/officier/annexe/${user.id}`)
-          .then((response) => response.json())
-          .then((data) => setAnnexe(data));*/
-        navigate("/officier/index");
+        navigate("/agent/index");
       }
     } catch (error) {
       console.error("Login failed. Check your credentials.");

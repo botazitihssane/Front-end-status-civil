@@ -23,14 +23,7 @@ const ViewActeDeces = () => {
     if (userData) {
       const user = JSON.parse(userData);
       const userRole = user.roles[0];
-      if (userRole === "ROLE_AGENT") {
-        console.log("Fetching agent annexe...");
-        fetch(`http://localhost:8080/api/agent/annexe/${user.id}`)
-          .then((response) => response.json())
-          .then((data) => {
-            setAnnexeData(data);
-          });
-      } else if (userRole === "ROLE_OFFICIER") {
+      if (userRole === "ROLE_OFFICIER") {
         fetch(`http://localhost:8080/api/officier/annexe/${user.id}`)
           .then((response) => response.json())
           .then((data) => {

@@ -16,24 +16,28 @@ import { useEffect, useState } from "react";
 const { default: Web3 } = require("web3");
 const ActeDeces = () => {
   const [annexe, setAnnexe] = useState();
+  const [officier, setOfficier] = useState();
   const getUserInfo = () => {
     const userData = localStorage.getItem("user");
-    console.log(userData);
     if (userData) {
       const user = JSON.parse(userData);
+      setOfficier(user);
       const userRole = user.roles[0];
-      if (userRole === "ROLE_AGENT") {
-        console.log("Fetching agent annexe...");
-        fetch(`http://localhost:8080/api/agent/annexe/${user.id}`)
+      if (userRole === "ROLE_OFFICIER") {
+        fetch(`http://localhost:8080/api/officier/annexe/${user.id}`)
           .then((response) => response.json())
           .then((data) => {
             setAnnexe(data);
-            console.log(data);
+            if (data.id) {
+              console.log(data);
+              loadRegistres(data.id);
+              // Set the concatenated value in acteNaissance
+              setActeDeces({
+                ...acteDeces,
+                officier: { id: officier.id, username: officier.username },
+              });
+            }
           });
-      } else if (userRole === "ROLE_OFFICIER") {
-        fetch(`http://localhost:8080/api/officier/annexe/${user.id}`)
-          .then((response) => response.json())
-          .then((data) => setAnnexe(data));
       }
     } else {
       console.log("User data not found in localStorage");
@@ -43,17 +47,24 @@ const ActeDeces = () => {
   const [acteDeces, setActeDeces] = useState({
     typeEnregistrement: "acteDeces",
     dateEnregistrement: new Date().toISOString().slice(0, 10),
-    lieuEnregistrement: annexe,
-    registre: "",
+    registre: {
+      id: "",
+    },
     nom: "",
     prenom: "",
     causeDeces: "",
     dateDeces: "",
     heureDeces: "",
     lieuDeces: "",
-    declarant: "",
-    relationAvecDefunt: "",
-    conjoint: "",
+    personne: {
+      id: "",
+    },
+    officier: {
+      id: "",
+    },
+    // declarant: "",
+    // relationAvecDefunt: "",
+    // conjoint: "",
     mere: "",
     pere: "",
     profession: "",
@@ -65,12 +76,12 @@ const ActeDeces = () => {
     defunt: {
       cin: "",
     },
-    declarant: {
-      cin: "",
-    },
-    conjoint: {
-      cin: "",
-    },
+    //  declarant: {
+    //    cin: "",
+    //  },
+    //  conjoint: {
+    //    cin: "",
+    //  },
   });
 
   const onInputChange = (e) => {
@@ -91,8 +102,8 @@ const ActeDeces = () => {
     e.preventDefault();
     const cins = [
       personnes.defunt.cin,
-      personnes.declarant.cin,
-      personnes.conjoint.cin,
+      //   personnes.declarant.cin,
+      // personnes.conjoint.cin,
     ];
     const fetchedData = [];
 
@@ -117,8 +128,9 @@ const ActeDeces = () => {
       profession: fetchedData[0].profession,
       dateNaissance: fetchedData[0].dateNaissance,
       lieuNaissance: fetchedData[0].lieuNaissance,
-      declarant: fetchedData[1].nom + " " + fetchedData[1].prenom,
-      conjoint: fetchedData[2].nom + " " + fetchedData[2].prenom,
+      personne: { id: fetchedData[0].id },
+      //   declarant: fetchedData[1].nom + " " + fetchedData[1].prenom,
+      //   conjoint: fetchedData[2].nom + " " + fetchedData[2].prenom,
     }));
     console.log(fetchedData);
     const idPereDefunt = fetchedData[0].pere;
@@ -167,24 +179,45 @@ const ActeDeces = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    const dataToSend = { ...acteDeces };
     interactWithBlockChain(acteDeces);
-    /*let data = JSON.stringify(acteDeces);
+    let data = JSON.stringify(dataToSend);
     console.log(data);
     let head = { "Content-Type": "application/json" };
-    fetch("http://localhost:8080/api/actes/deces/transactions", {
+    fetch("http://localhost:8080/api/enregistrement", {
       method: "POST",
       headers: head,
       body: data,
     })
       .then((response) => response.json())
       .then((data) => {
-        setResponse(response);
+        console.log(data);
       })
       .catch((error) => {
         console.error(error);
-      });*/
+      });
   };
+  const [registres, setRegistres] = useState([]);
+  const [selectedRegistre, setSelectedRegistre] = useState("");
 
+  const loadRegistres = (annexe) => {
+    fetch(`http://localhost:8080/api/registre/annexe/${annexe}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setRegistres(data);
+      });
+  };
+  const onRegisteInputChange = (e) => {
+    const selectedRegistreId = e.target.value;
+    setSelectedRegistre(selectedRegistreId);
+    setActeDeces({
+      ...acteDeces,
+      registre: {
+        id: selectedRegistreId,
+      },
+    });
+    console.log("selected registre " + selectedRegistreId);
+  };
   const interactWithBlockChain = async (acteData) => {
     const web3 = new Web3(
       new Web3.providers.HttpProvider("http://localhost:7545")
@@ -423,7 +456,7 @@ const ActeDeces = () => {
     try {
       const tx = await MyContract.methods
         .ajouterActe(
-          acteData.officierValidant,
+          acteData.officier.username,
           acteData.nom,
           acteData.prenom,
           acteData.dateDeces,
@@ -470,7 +503,35 @@ const ActeDeces = () => {
                   </h6>
                   <div className="pl-lg-4">
                     <Row>
-                      <Col lg="6">
+                      <Col lg="4">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-arrondissement"
+                          >
+                            Registre Appartenant
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            id="input-nom-arrondissement"
+                            placeholder="Arrondissement"
+                            type="select"
+                            name="arrondissement"
+                            onChange={(e) => onRegisteInputChange(e)}
+                            value={selectedRegistre}
+                          >
+                            <option value="" disabled hidden>
+                              Registre
+                            </option>
+                            {registres.map((registre) => (
+                              <option key={registre.id} value={registre.id}>
+                                {registre.nomRegistre}
+                              </option>
+                            ))}
+                          </Input>
+                        </FormGroup>
+                      </Col>
+                      <Col lg="4">
                         <FormGroup>
                           <label
                             className="form-control-label"
@@ -490,7 +551,7 @@ const ActeDeces = () => {
                         </FormGroup>
                         <span>{acteDeces.defunt}</span>
                       </Col>
-                      <Col lg="6">
+                      <Col lg="4">
                         <FormGroup>
                           <label
                             className="form-control-label"
@@ -572,77 +633,10 @@ const ActeDeces = () => {
                   </div>
                   <hr className="my-4" />
                   <h6 className="heading-small text-muted mb-4">
-                    Informations sur le declarant
-                  </h6>
-                  <div className="pl-lg-4">
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-declarant"
-                          >
-                            Declarant
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-declarant"
-                            placeholder="Declarant"
-                            name="declarant"
-                            type="text"
-                            onChange={(e) => onPersonneInputChange(e)}
-                            value={personnes.declarant.cin}
-                          ></Input>
-                        </FormGroup>
-                        <span>{acteDeces.declarant}</span>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-relationAvecDefunt"
-                          >
-                            Relation avec le defunt
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-relationAvecDefunt"
-                            placeholder="Relation avec le defunt"
-                            name="relationAvecDefunt"
-                            type="text"
-                            onChange={(e) => onInputChange(e)}
-                            value={acteDeces.relationAvecDefunt}
-                          ></Input>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  </div>
-                  <hr className="my-4" />
-                  <h6 className="heading-small text-muted mb-4">
                     Informations sur le conjoint
                   </h6>
                   <div className="pl-lg-4">
                     <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-conjoint"
-                          >
-                            Conjoint
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-conjoint"
-                            placeholder="Coinjoint"
-                            name="conjoint"
-                            type="text"
-                            onChange={(e) => onPersonneInputChange(e)}
-                            value={personnes.conjoint.cin}
-                          ></Input>
-                        </FormGroup>
-                        <span>{acteDeces.conjoint}</span>
-                      </Col>
                       <Col lg="4">
                         <div className="text-right" xs="4">
                           <Button

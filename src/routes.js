@@ -1,7 +1,4 @@
 import Index from "views/Index.js";
-import ActeDeces from "views/Actes/ActeDeces/AddActeDeces";
-import ActeMariage from "views/Actes/ActeMariage/AddActeMariage";
-import ActeNaissance from "views/Actes/ActeNaissance/AddActeNaissance";
 import Citoyen from "views/Personne/Citoyen/AddCitoyen";
 import EditCitoyen from "views/Personne/Citoyen/EditCitoyen";
 import ViewCitoyen from "views/Personne/Citoyen/ViewCitoyen";
