@@ -4,11 +4,23 @@ import { DataGrid, GridDeleteIcon } from "@mui/x-data-grid";
 import { IconButton } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import UserHeader from "components/Headers/UserHeader";
-import { Card, CardBody, CardHeader, Col, Container, Row } from "reactstrap";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Row,
+  Table,
+} from "reactstrap";
 const ViewRegion = () => {
   const navigate = useNavigate();
   const [regions, setRegions] = useState([]);
-  const columns = [
+  /*const columns = [
     { field: "id", headerName: "ID" },
     {
       field: "nomRegion",
@@ -40,7 +52,7 @@ const ViewRegion = () => {
         </div>
       ),
     },
-  ];
+  ];*/
 
   const handleEditClick = (region) => {
     navigate("/admin/editRegion", { state: { region } });
@@ -82,12 +94,40 @@ const ViewRegion = () => {
                 </Row>
               </CardHeader>
               <CardBody>
-                <DataGrid
-                  rows={regions}
-                  columns={columns}
-                  autoHeight={true}
-                  getRowId={(row) => row.id}
-                />
+                <Table className="align-items-center table-flush" responsive>
+                  <thead className="thead-light">
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">Nom région</th>
+                      <th scope="col">Population</th>
+                      <th scope="col">Superficie</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {regions.map((region) => (
+                      <tr key={region.id}>
+                        <th scope="row">{region.id}</th>
+                        <td>{region.nomRegion}</td>
+                        <td>{region.population}</td>
+                        <td>{region.superficie}</td>
+
+                        <td>
+                          <div className="d-flex">
+                            <IconButton onClick={() => handleEditClick(region)}>
+                              <Edit color="primary" />
+                            </IconButton>
+                            <IconButton
+                              onClick={() => handleDeleteClick(region.id)}
+                            >
+                              <GridDeleteIcon color="error" />
+                            </IconButton>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
               </CardBody>
             </Card>
           </Col>

@@ -150,15 +150,13 @@ const SidebarAgent = (props) => {
           <h6 className="navbar-heading text-muted">Ajout d'acte</h6>
           {/* Navigation */}
           <Nav className="mb-md-3" navbar>
-            <NavItem>
-              <NavLink href={"/agent/acteNaissance"}>
-                <i className="ni ni-spaceship" />
-                Acte de naissance
-              </NavLink>
-            </NavItem>
+            <NavLink href={"/agent/acteNaissance"}>
+              <i className="ni ni-fat-add text-blue" />
+              Acte de naissance
+            </NavLink>
             <NavItem>
               <NavLink href={"/agent/acteDeces"}>
-                <i className="ni ni-ui-04" />
+                <i className="ni ni-fat-add text-red" />
                 Acte de deces
               </NavLink>
             </NavItem>
@@ -168,13 +166,13 @@ const SidebarAgent = (props) => {
           <Nav className="mb-md-3" navbar>
             <NavItem>
               <NavLink href={"/agent/ListeActeDeces"}>
-                <i className="ni ni-ui-04" />
+                <i class="fa-solid fa-magnifying-glass text-blue"></i>
                 Acte de deces
               </NavLink>
             </NavItem>
             <NavItem>
               <NavLink href={"/agent/ListeActeNaissance"}>
-                <i className="ni ni-ui-04" />
+                <i class="fa-solid fa-magnifying-glass text-red"></i>
                 Acte de naissance
               </NavLink>
             </NavItem>

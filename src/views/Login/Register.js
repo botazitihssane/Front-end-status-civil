@@ -115,7 +115,7 @@ const Register = () => {
                       <InputGroup className="input-group-alternative">
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>
-                            <i className="ni ni-username-83" />
+                            <i class="fa-regular fa-user"></i>
                           </InputGroupText>
                         </InputGroupAddon>
 
@@ -153,7 +153,7 @@ const Register = () => {
                       <InputGroup className="input-group-alternative">
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>
-                            <i className="ni ni-password-83" />
+                            <i className="ni ni-lock-circle-open" />
                           </InputGroupText>
                         </InputGroupAddon>
                         <Input

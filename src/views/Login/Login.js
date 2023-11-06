@@ -80,10 +80,13 @@ const Login = () => {
             </div>
             <Form onSubmit={handleLogin} ref={form}>
               <FormGroup className="mb-3">
-                <InputGroup className="input-group-alternative">
+                <InputGroup
+                  className="input-group-alternative"
+                  style={{ width: "100%" }}
+                >
                   <InputGroupAddon addonType="prepend">
                     <InputGroupText>
-                      <i className="ni ni-email-83" />
+                      <i class="fa-regular fa-user"></i>
                     </InputGroupText>
                   </InputGroupAddon>
                   <Input
@@ -98,7 +101,10 @@ const Login = () => {
                 </InputGroup>
               </FormGroup>
               <FormGroup>
-                <InputGroup className="input-group-alternative">
+                <InputGroup
+                  className="input-group-alternative"
+                  style={{ width: "100%" }}
+                >
                   <InputGroupAddon addonType="prepend">
                     <InputGroupText>
                       <i className="ni ni-lock-circle-open" />

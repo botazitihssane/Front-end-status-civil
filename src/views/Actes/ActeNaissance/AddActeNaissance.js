@@ -21,6 +21,7 @@ const ActeNaissance = () => {
     const userData = localStorage.getItem("user");
     if (userData) {
       const user = JSON.parse(userData);
+      console.log(user);
       setOfficier(user);
       const userRole = user.roles[0];
       if (userRole === "ROLE_OFFICIER") {

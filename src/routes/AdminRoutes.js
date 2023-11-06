@@ -25,7 +25,7 @@ import AgentInfo from "views/Utilisateurs/agent";
 var routes = [
   {
     path: "/index",
-    name: "Dashboard",
+    name: "Tableau de bord",
     icon: "ni ni-tv-2 text-primary",
     component: <Index />,
     layout: "/admin",

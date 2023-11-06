@@ -4,7 +4,15 @@ import { DataGrid, GridDeleteIcon } from "@mui/x-data-grid";
 import { IconButton } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import UserHeader from "components/Headers/UserHeader";
-import { Card, CardBody, CardHeader, Col, Container, Row } from "reactstrap";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Row,
+  Table,
+} from "reactstrap";
 const ViewPrefecture = () => {
   const navigate = useNavigate();
   const [prefectures, setPrefectures] = useState([]);
@@ -101,12 +109,42 @@ const ViewPrefecture = () => {
                 </Row>
               </CardHeader>
               <CardBody>
-                <DataGrid
-                  rows={prefectures}
-                  columns={columns}
-                  autoHeight={true}
-                  getRowId={(row) => row.id}
-                />
+                <Table className="align-items-center table-flush" responsive>
+                  <thead className="thead-light">
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">Nom Prefecture</th>
+                      <th scope="col">Région Appartenant</th>
+                      <th scope="col">Population</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {prefectures.map((prefecture) => (
+                      <tr key={prefecture.id}>
+                        <th scope="row">{prefecture.id}</th>
+                        <td>{prefecture.nomPrefecture}</td>
+                        <td>{prefecture.region.nomRegion}</td>
+                        <td>{prefecture.population}</td>
+
+                        <td>
+                          <div className="d-flex">
+                            <IconButton
+                              onClick={() => handleEditClick(prefecture)}
+                            >
+                              <Edit color="primary" />
+                            </IconButton>
+                            <IconButton
+                              onClick={() => handleDeleteClick(prefecture.id)}
+                            >
+                              <GridDeleteIcon color="error" />
+                            </IconButton>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
               </CardBody>
             </Card>
           </Col>

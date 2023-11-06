@@ -151,7 +151,7 @@ const Sidebar = (props) => {
           <Nav className="mb-md-3" navbar>
             <NavItem>
               <NavLink href={"/admin/officiers"}>
-                <i className="ni ni-spaceship" />
+                <i className="ni ni-badge text-blue" />
                 Gestion des utilisateurs
               </NavLink>
             </NavItem>
@@ -161,13 +161,13 @@ const Sidebar = (props) => {
           <Nav className="mb-md-3" navbar>
             <NavItem>
               <NavLink href={"/admin/historiqueActeDeces"}>
-                <i className="ni ni-ui-04" />
+                <i className="ni ni-archive-2" />
                 Acte de deces
               </NavLink>
             </NavItem>
             <NavItem>
               <NavLink href={"/admin/historiqueActeNaissance"}>
-                <i className="ni ni-ui-04" />
+                <i className="ni ni-archive-2" />
                 Acte de naissance
               </NavLink>
             </NavItem>

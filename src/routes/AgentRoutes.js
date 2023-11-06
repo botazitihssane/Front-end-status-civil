@@ -2,12 +2,20 @@ import ActeDeces from "views/Actes/ActeDeces/AddActeDeces";
 import ViewActeDeces from "views/Actes/ActeDeces/ViewActeDeces";
 import ActeNaissance from "views/Actes/ActeNaissance/AddActeNaissance";
 import ViewActeNaissance from "views/Actes/ActeNaissance/ViewActeNaissance";
+import IndexAgent from "views/IndexAgent";
 
 import Citoyen from "views/Personne/Citoyen/AddCitoyen";
 import EditCitoyen from "views/Personne/Citoyen/EditCitoyen";
 import ViewCitoyen from "views/Personne/Citoyen/ViewCitoyen";
 
 var agentRoutes = [
+  {
+    path: "/index",
+    name: "Acceuil",
+    icon: "ni ni-tv-2 text-primary",
+    component: <IndexAgent />,
+    layout: "/agent",
+  },
   {
     path: "/acteNaissance",
     name: "Acte Naissance",
@@ -39,7 +47,7 @@ var agentRoutes = [
   {
     path: "/citoyen",
     name: "Citoyen",
-    icon: "ni ni-single-02 text-orange",
+    icon: "ni ni-single-02 text-red",
     component: <Citoyen />,
     layout: "/agent",
   },

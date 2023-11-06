@@ -176,13 +176,56 @@ const ViewCitoyen = () => {
                   </Col>
                 </Row>
               </CardHeader>
-              <CardBody>
-                <DataGrid
-                  rows={citoyens}
-                  columns={columns}
-                  autoHeight={true}
-                  getRowId={(row) => row.id}
-                />
+              <CardBody style={{ overflowX: "auto" }}>
+                <table className="table">
+                  <thead className="thead-light">
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">Nom</th>
+                      <th scope="col">Prenom</th>
+                      <th scope="col">Sexe</th>
+                      <th scope="col">Numero d'identification</th>
+                      <th scope="col">Date de naissance</th>
+                      <th scope="col">Lieu de naissance</th>
+                      <th scope="col">Nationalité</th>
+                      <th scope="col">Adresse</th>
+                      <th scope="col">Profession</th>
+                      <th scope="col">Etat civil</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {citoyens.map((citoyen) => (
+                      <tr key={citoyen.id}>
+                        <th scope="row">{citoyen.id}</th>
+                        <td>{citoyen.nom}</td>
+                        <td>{citoyen.prenom}</td>
+                        <td>{citoyen.sexe}</td>
+                        <td>{citoyen.numeroIdentification}</td>
+                        <td>{citoyen.dateNaissance}</td>
+                        <td>{citoyen.lieuNaissance}</td>
+                        <td>{citoyen.nationalite}</td>
+                        <td>{citoyen.adresse}</td>
+                        <td>{citoyen.profession}</td>
+                        <td>{citoyen.etatCivil}</td>
+                        <td>
+                          <div className="d-flex">
+                            <IconButton
+                              onClick={() => handleEditClick(citoyen)}
+                            >
+                              <Edit color="primary" />
+                            </IconButton>
+                            <IconButton
+                              onClick={() => handleDeleteClick(citoyen.id)}
+                            >
+                              <GridDeleteIcon color="error" />
+                            </IconButton>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </CardBody>
             </Card>
           </Col>
