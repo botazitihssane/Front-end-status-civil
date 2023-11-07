@@ -15,8 +15,21 @@ import { useEffect, useState } from "react";
 const { default: Web3 } = require("web3");
 const ActeNaissance = () => {
   const [annexe, setAnnexe] = useState();
-  const [officier, setOfficier] = useState();
+  const [officier, setOfficier] = useState({
+    id: "",
+    username: "",
+  });
 
+  const fetchOfficierInfo = (officierId) => {
+    fetch(`http://localhost:8080/api/officier/${officierId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setOfficier(data);
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
+      });
+  };
   const getUserInfo = () => {
     const userData = localStorage.getItem("user");
     if (userData) {
@@ -25,6 +38,11 @@ const ActeNaissance = () => {
       setOfficier(user);
       const userRole = user.roles[0];
       if (userRole === "ROLE_OFFICIER") {
+        console.log(user.id);
+
+        // Call the function to fetch officier's information
+        fetchOfficierInfo(user.id);
+
         fetch(`http://localhost:8080/api/officier/annexe/${user.id}`)
           .then((response) => response.json())
           .then((data) => {
@@ -32,7 +50,6 @@ const ActeNaissance = () => {
             if (data.id) {
               console.log(data);
               loadRegistres(data.id);
-              // Set the concatenated value in acteNaissance
               setActeNaissance({
                 ...acteNaissance,
                 officier: { id: officier.id, username: officier.username },
